@@ -1,0 +1,39 @@
+{
+  "name": "dataforest",
+  "version": "0.0.1",
+  "authors": [
+    "Liam (GH:rezonant) <wilahti@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-animate": "~1.4.4",
+    "angular-bootstrap": "~0.13.3",
+    "angular-bootstrap-datetimepicker": "~0.3.13",
+    "angular-material": "~0.10.1",
+    "angular-material-icons": "~0.5.0",
+    "angular-sanitize": "~1.4.4",
+    "angular-ui-sortable": "~0.13.4",
+    "angular-ui-tinymce": "~0.0.9",
+    "angular-ui-utils": "~3.0.0",
+    "angularjs-filters": "https://github.com/rezonant/angularjs-filters.git#master",
+    "animate.css": "animate-css#~3.4.0",
+    "bootstrap": "~3.3.5",
+    "dibello": "~0.4.0",
+    "eonasdan-bootstrap-datetimepicker": "~4.15.35",
+    "es6-promise": "~3.0.2",
+    "html5shiv": "~3.7.3",
+    "jquery-ui": "~1.11.4",
+    "moment": "~2.10.6",
+    "respond": "~1.4.2"
+  },
+  "resolutions": {
+    "angular": "~1.3.14"
+  }
+}

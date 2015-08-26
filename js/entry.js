@@ -1,0 +1,2 @@
+// ok
+console.log('cool');
