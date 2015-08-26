@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
 		app: {
 			src: [
-				'js/entry.js'
+				'src/entry.js'
 			],
 
 			dest: 'build/js/app.js'
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
     	main: {
 			files: [
 				'Gruntfile.js',
-				'js/**/*.js',
+				'src/**/*.js',
 				'html/**/*.html',
 				'css/**/*.scss',
 				'brand/**/*.html',
@@ -115,8 +115,7 @@ module.exports = function(grunt) {
 			'build/components/angular-ui-tinymce/src/tinymce.js',
 			'build/components/angular-ui-sortable/sortable.js',
 
-			'build/components/angular-material-icons/angular-material-icons.js',
-			'build/components/bootstrap/dist/js/bootstrap.js',
+			'build/components/angular-material-icons/angular-material-icons.js'
 		],
         dest: 'build/js/platform.min.js'
       },
