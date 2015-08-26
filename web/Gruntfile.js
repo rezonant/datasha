@@ -14,13 +14,13 @@ module.exports = function(grunt) {
 			}
 		}
 	},
-
+ 
     concat: {
 		platformCss: {
 			src: [
 				'build/components/animate-css/animate.css',
-				'build/components/angular-material/angular-material.css',
 				'build/components/bootstrap/dist/css/bootstrap.css',
+				'build/components/angular-material/angular-material.css',
 				'build/components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
 				'build/components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css',
 			],
