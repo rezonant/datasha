@@ -1,0 +1,7 @@
+api/app/bootstrap.php.cache
+api/app/config/parameters.yml
+api/vendor/
+web/.sass-cache/
+web/build/
+web/node_modules/
+web/nbproject/private/
