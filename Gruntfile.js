@@ -98,8 +98,8 @@ module.exports = function(grunt) {
 
 			'build/components/jquery/dist/jquery.js',
 			'build/components/jquery-ui/jquery-ui.js',
-			'build/components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-			'build/components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js',
+//			'build/components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+//			'build/components/angular-bootstrap-datetimepicker/src/js/datetimepicker.js',
 			'build/components/bootstrap/dist/js/bootstrap.js',
 
 			'build/components/angular/angular.js',
