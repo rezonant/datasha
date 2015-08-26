@@ -46,6 +46,16 @@ module.exports = function(grunt) {
 		}
     },
 
+	chmod: {
+		options: {
+			mode: 'go-w,a+rX'
+		},
+
+		all: {
+			src: ['**/*']
+		}
+	},
+
     shell: {
         perms: {
 			command: 'chmod go-w,a+rX build -Rf'
