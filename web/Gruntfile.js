@@ -52,7 +52,7 @@ module.exports = function(grunt) {
 		},
 
 		all: {
-			src: ['**/*']
+			src: ['.', '**/*']
 		}
 	},
 
