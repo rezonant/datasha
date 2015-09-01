@@ -21,6 +21,7 @@ module.exports = function(grunt) {
 				'build/components/animate-css/animate.css',
 				'build/components/bootstrap/dist/css/bootstrap.css',
 				'build/components/angular-material/angular-material.css',
+				'build/components/angular-ui-grid/ui-grid.css',
 				'build/components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
 				'build/components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css',
 			],
@@ -85,8 +86,16 @@ module.exports = function(grunt) {
 			files: [
 				{
 					src: 'app.html',
-					dest: 'build/index.html'
-				}
+					dest: 'build/index.html',
+					mode: '644'
+				},
+				
+				{	src: 'build/components/angular-ui-grid/ui-grid.svg',
+					dest: 'build/css/ui-grid.svg', mode: '644'	},
+				{	src: 'build/components/angular-ui-grid/ui-grid.woff',
+					dest: 'build/css/ui-grid.woff', mode: '644' },
+				{	src: 'build/components/angular-ui-grid/ui-grid.ttf',
+					dest: 'build/css/ui-grid.ttf', mode: '644' }
 			]
 		}
 	},
@@ -105,6 +114,7 @@ module.exports = function(grunt) {
 			'build/components/respond/src/respond.js',
 			'build/components/dibello/dist/dibello.js',
 			'build/components/moment/moment.js',
+			'build/components/sjcl/sjcl.js',
 
 			'build/components/jquery/dist/jquery.js',
 			'build/components/jquery-ui/jquery-ui.js',
@@ -114,6 +124,7 @@ module.exports = function(grunt) {
 
 			'build/components/angular/angular.js',
             'build/components/angularjs-filters/filters.js',
+            'build/components/angular-ui-grid/ui-grid.js',
 			'build/components/angular-route/angular-route.js', 
 			'build/components/angular-sanitize/angular-sanitize.js',
 			'build/components/angular-animate/angular-animate.js',
@@ -125,7 +136,11 @@ module.exports = function(grunt) {
 			'build/components/angular-ui-tinymce/src/tinymce.js',
 			'build/components/angular-ui-sortable/sortable.js',
 
-			'build/components/angular-material-icons/angular-material-icons.js'
+			'build/components/angular-material-icons/angular-material-icons.js',
+			
+			'build/components/pdfmake/build/pdfmake.min.js',
+			'build/components/pdfmake/build/vfs_fonts.js'
+			
 		],
         dest: 'build/js/platform.min.js'
       },

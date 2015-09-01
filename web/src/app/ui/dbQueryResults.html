@@ -1,0 +1,15 @@
+<div style="height:100%;">
+	
+	<db-pager paging="page" style="float:right;"></db-pager>
+	
+	<div
+		ng-class="{'grid-loading': loading}"
+		style="position:absolute;top:3em;left:0;right:0;bottom:0;" 
+		ui-grid="gridOptions" 
+		ui-grid-pinning
+		ui-grid-edit
+		ui-grid-selection
+		ui-grid-exporter>
+
+	</div>
+</div>

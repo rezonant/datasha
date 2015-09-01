@@ -1,0 +1,33 @@
+<md-dialog aria-label="Setup" style="max-width:30em;">
+	<md-dialog-content>
+		<div class="md-headline">
+			Setup
+		</div>
+		<p>You must choose a password for this workstation.
+			You will need to enter this password for each 
+			{{$root.brand.name}} session you start, it will 
+			provide access to all of your saved credentials.</p>
+		
+		<form ng-submit="go()">
+			<div ng-show="errorMessage" class="error-message">
+				{{errorMessage}}
+			</div>
+			
+			<md-input-container>
+				<label>Password</label>
+				<input type="password" ng-model="password1" />
+			</md-input-container>
+			
+			<md-input-container>
+				<label>Repeat Password</label>
+				<input type="password" ng-model="password2" />
+			</md-input-container>
+			
+			<button style="visibility:hidden;pointer-events:none;"></button>
+		</form>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<md-button class="md-primary" style="float:right;" ng-click="go()">OK</md-button>
+	</div>
+</md-dialog>

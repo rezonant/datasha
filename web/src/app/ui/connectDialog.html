@@ -1,0 +1,58 @@
+<md-dialog aria-label="Connect">
+	<md-dialog-content>
+
+		<div ng-show="connecting">
+			<div class="md-title">Please wait...</div>
+			<em>Establishing connection to {{newConnection.user}}@{{newConnection.host}}...</em>
+		</div>
+		<div ng-show="!connecting">
+			<div class="md-title">New Connection</div>
+			<form ng-submit="connect(newConnection)">
+				<md-select ng-model="newConnection.type" placeholder="Choose Type">
+					<md-option ng-value="'mysql'">MySQL</md-option>
+					<md-option ng-value="'pgsql'">PostGreSQL</md-option>
+					<md-option ng-value="'mssql'">MSSQL</md-option>
+					<md-option ng-value="'redis'">Redis</md-option>
+					<md-option ng-value="'mongodb'">MongoDB</md-option>
+					<md-option ng-value="'cassandra'">Cassandra</md-option>
+					<md-option ng-value="'indexeddb'">IndexedDB</md-option>
+				</md-select>
+				<div layout="column">
+					<div layout="row">
+						<md-input-container>
+							<label>Hostname</label>
+							<input type="text" ng-model="newConnection.host" />
+						</md-input-container>
+						<md-input-container>
+							<label>Port</label>
+							<input type="text" ng-model="newConnection.port" /> 
+						</md-input-container>
+					</div>
+					<div layout="row">
+						<md-input-container>
+							<label>Username</label>
+							<input type="text" ng-model="newConnection.user" />
+						</md-input-container>
+						<md-input-container>
+							<label>Password</label>
+							<input type="password" ng-model="newConnection.pass" />
+						</md-input-container>
+					</div>
+				</div>
+				
+				<!-- ng-submit does not work without a vanilla <button> element -->
+				<button style="visibility:hidden;"></button>
+			</form>
+		</div>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<div ng-show="connecting">
+			
+		</div>
+		<div ng-show="!connecting">
+			<md-button ng-click="closeDialog()">Cancel</md-button>
+			<md-button class="md-primary" style="float:right;" ng-click="connect(newConnection)">Connect</md-button>
+		</div>
+	</div>
+</md-dialog>

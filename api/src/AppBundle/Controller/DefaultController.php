@@ -6,16 +6,16 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class DefaultController extends Controller
+use FOS\RestBundle\Controller\Annotations as REST;
+use JMS\Serializer\Annotation as JMS;
+
+class DefaultController extends BaseController
 {
     /**
-     * @Route("/", name="homepage")
+     * @REST\Get("/")
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
-        return $this->render('default/index.html.twig', array(
-            'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
-        ));
+		return 'DataForest API v.0.0.1';
     }
 }

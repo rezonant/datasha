@@ -1,9 +1,53 @@
 body {
-	font-family: 'Roboto';
+	font-family: 'Roboto', 'Deja Vu Sans', 'Helvetica';
 	width:100%;
-	height:100%;
+	height:initial;
 	background:white;
 	color:black;
+}
+
+.ui-grid.grid-loading {
+	opacity: 0.4;
+	transition: opacity 2s;
+}
+
+.ui-grid {
+	opacity: 1;
+	transition: opacity 1s;
+}
+
+.ui-grid-menu-button .ui-grid-menu .ui-grid-menu-mid {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.md-button.md-icon-button.grid-row-button {
+	width: 32px;
+	height: 32px;
+	vertical-align: top;
+	margin: 0;
+	padding: 0;
+	
+	md-icon {
+		vertical-align:top;
+	}
+}
+
+.error-message {
+	padding: 0.5em;
+	margin: 0.5em 0;
+	background: #FFAAAA;
+	color: black; 
+	border-radius: 5px;
+}
+
+.loading {
+	opacity: 0;
+}
+
+.loaded {
+	opacity: 1;
+	transition: opacity 2s;
 }
 
 core-menu {
@@ -730,5 +774,46 @@ tr.selected {
 	.main-content {
 		padding-left:0;
 		padding-right:0;
+	}
+}
+
+md-content.full-height {
+	position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 4.5em;
+	
+	md-tabs {
+		height: 95%;
+	}
+	
+}
+
+textarea.queryBox {
+	width:100%;
+	height:100%;
+	min-height: 4em;
+	font-family: monospace;
+	border: 1px solid #ddd;
+	margin: 0.5em 0;
+}
+
+md-content.main {
+	position: absolute;
+	top: 5em;
+	left: 0.5em;
+	right: 0.5em;
+	bottom: 0em;
+	overflow: hidden;
+}
+
+h2.pagetitle {
+	a {
+		color: white;
+	}
+	
+	a:visited {
+		color: white;
 	}
 }

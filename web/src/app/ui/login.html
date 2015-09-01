@@ -1,0 +1,39 @@
+<md-dialog aria-label="Authenticate" style="max-width:30em;">
+	<md-dialog-content>
+		<div ng-show="!showReset">
+			<div class="md-headline">
+				Credentials are locked
+			</div>
+
+			<p>Provide your local password to decrypt database credentials.</p>
+
+			<form ng-submit="go()">
+				<div ng-show="errorMessage" class="error-message">
+					{{errorMessage}}
+				</div>
+
+				<md-input-container>
+					<label>Password</label>
+					<input type="password" ng-model="password" />
+				</md-input-container>
+
+				<button style="visibility:hidden;pointer-events:none;"></button>
+			</form>
+		</div>
+		<div ng-show="showReset">
+			<p>Are you sure you wish to reset this workstation? All saved settings, connections,
+				and credentials will be lost.</p>
+		</div>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<div ng-show="!showReset">
+			<md-button ng-click="showReset = true">Reset</md-button>
+			<md-button class="md-raised md-primary" style="float:right;" ng-click="go()">OK</md-button>
+		</div>
+		<div ng-show="showReset">
+			<md-button ng-click="showReset = false">Cancel</md-button>
+			<md-button class="md-raised md-primary" style="float:right;" ng-click="reset()">Reset</md-button>
+		</div>
+	</div>
+</md-dialog>
