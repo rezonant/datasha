@@ -50,6 +50,10 @@ class ConnectionController extends BaseController {
 		$connection->unlock($key);
 		
 		$model = new ConnectionModel($connection->getId(), "{$connection->getUsername()}@{$connection->getHostName()}");
+		$model->setType($connection->getType());
+		$model->setHost($connection->getHostName());
+		$model->setPort($connection->getPort());
+		$model->setUsername($connection->getUsername());
 		$model->setKey($key);
 		
 		return $model;
@@ -72,6 +76,31 @@ class ConnectionController extends BaseController {
 		
 		$driver = $this->connections->getDriver($connection->getType());
 		return $driver->getDatabases($connection);
+	}
+	
+	/**
+	 * Most useful for checking if a connection is valid
+	 * @REST\Post("/connections/{id}")
+	 */
+	public function getConnectionStatus($id, Request $request) {
+		
+		$details = json_decode($request->getContent());
+		$key = $request->request->get('key');
+		$connection = $this->connections->getConnection($id);
+		
+		if (!$connection)
+			return new Response('{"message":"No such connection"}', 404);
+		
+		if (!$connection->unlock($key))
+			return new Response('{"message":"Invalid key"}', 400);
+		
+		$model = new ConnectionModel($connection->getId(), $connection->getUsername().'@'.$connection->getPassword());
+		$model->setType($connection->getType());
+		$model->setUsername($connection->getUsername());
+		$model->setHost($connection->getHostName());
+		$model->setPort($connection->getPort());
+		
+		return $model;
 	}
 	
 	/**
@@ -134,6 +163,9 @@ class ConnectionController extends BaseController {
 	 * @REST\Delete("/connections/{id}")
 	 */
 	public function deleteConnection($id) {
+		
+		$this->connections->deleteConnection($id);
+		
 		return new Response('{"message":"Success"}', 200);
 	}
 }

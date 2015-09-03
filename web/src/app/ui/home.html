@@ -1,3 +1,135 @@
-
-<h1>Welcome to {{brand.name}}!</h1>
-
+<div class="page-backdrop page-backdrop-forest dashboard">
+	
+	<div>
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Connections</md-subheader>
+				<md-divider></md-divider>
+				<div ng-repeat="cnx in $root.activeConnections">
+					<md-list-item>
+						{{cnx.label}}
+					</md-list-item>	
+					<md-divider ng-if="!$last"></md-divider>
+				</div>
+			</md-list>
+		</md-card>
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Stash</md-subheader>
+				<md-divider></md-divider>
+				<div ng-repeat="cnx in $root.activeConnections">
+					<md-list-item>
+						{{cnx.label}}
+					</md-list-item>	
+					<md-divider ng-if="!$last"></md-divider>
+				</div>
+			</md-list>
+		</md-card>
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Tools</md-subheader>
+				<md-divider></md-divider>
+				<div ng-repeat="cnx in $root.activeConnections">
+					<md-list-item>
+						{{cnx.label}}
+					</md-list-item>	
+					<md-divider ng-if="!$last"></md-divider>
+				</div>
+			</md-list>
+		</md-card>
+	</div>
+	<div>
+		
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Bookmarks</md-subheader>
+				<md-divider></md-divider>
+				
+				<md-list-item ng-click="noop = 1">
+					Sidearm school #1
+				</md-list-item>	
+				<md-list-item ng-click="noop = 1">
+					TODO: Broken data here
+				</md-list-item>	
+				<md-list-item ng-click="noop = 1">
+					MASN list #2233
+				</md-list-item>	
+			</md-list>
+		</md-card>
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Recent</md-subheader>
+				<md-divider></md-divider>
+				<div ng-repeat="cnx in $root.activeConnections">
+					<md-list-item>
+						{{cnx.label}}
+					</md-list-item>	
+					<md-divider ng-if="!$last"></md-divider>
+				</div>
+			</md-list>
+		</md-card>
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Favorites</md-subheader>
+				<md-divider></md-divider>
+				<div ng-repeat="cnx in $root.activeConnections">
+					<md-list-item>
+						{{cnx.label}}
+					</md-list-item>	
+					<md-divider ng-if="!$last"></md-divider>
+				</div>
+			</md-list>
+		</md-card>
+	</div>
+	
+	<div>
+		
+		<md-card>
+			<md-list>
+				<div class="card-actions">
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">settings</md-icon>
+					</md-button>
+				</div>
+				<md-subheader>Metrics</md-subheader>
+				<md-divider></md-divider>
+				<div style="margin:2.5em;">
+					<img src="http://cliparts.co/cliparts/nrc/LgB/nrcLgBnT8.svg" 
+						 style="width:50%;float:right;" />
+					<img src="http://www.cliparthut.com/clip-arts/183/bar-graph-clip-art-183544.png"
+						 style="width:50%;" />
+				</div>
+			</md-list>
+		</md-card>
+	</div>
+</div>

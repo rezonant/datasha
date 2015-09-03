@@ -44,117 +44,17 @@ class QueryController extends BaseController {
 		if (!$cnx->unlock($key))
 			return new Response('{"message":"Invalid access key"}', 400);
 		
-		return new Response(json_encode(
-			$this->connections->query($cnx, $dbName, $query)
-		), 200);
+		try {
+			$results = $this->connections->query($cnx, $dbName, $query);
+		} catch (\Exception $e) {
+			return new Response(json_encode(array(
+				'message' => $e->getMessage()
+			)), 500);
+		}
 		
-		return new Response(json_encode(array(
-			array(
-				'foo' => 'bar1',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar2',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			), array(
-				'foo' => 'bar3',
-				'bar' => 'baz',
-				'baz' => 'boo'
-			)
-		)));
+		return new Response(json_encode(
+			$results
+		), 200);
 	}
 	
 	/**

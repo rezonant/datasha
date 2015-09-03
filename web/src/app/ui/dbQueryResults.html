@@ -1,10 +1,31 @@
 <div style="height:100%;">
 	
 	<db-pager paging="page" style="float:right;"></db-pager>
+
+	<app-spinner 
+		ng-show="loading" 
+		style="position:absolute;left:0;right:0;top:6em;z-index:1;pointer-events:none;"></app-spinner>
+		
+	
+	<div ng-show="!loading && (!gridOptions.data || gridOptions.data.length == 0)" style="padding: 2em; font-size: 125%;">
+		<br/>
+		<br/>
+		
+		<div ng-show="message">
+			{{message}}
+		</div>
+		<div ng-show="!message && execution">
+			<em>Query executed successfully, {{execution.rowsAffected}} rows affected</em>
+		</div>
+		<div ng-show="!message && !execution">
+			<em>Query returned no results.</em>
+		</div>
+	</div>
 	
 	<div
 		ng-class="{'grid-loading': loading}"
-		style="position:absolute;top:3em;left:0;right:0;bottom:0;" 
+		ng-show="gridOptions.data.length > 0"
+		style="position:absolute;top:3em;left:0;right:0;bottom:0;background: white;" 
 		ui-grid="gridOptions" 
 		ui-grid-pinning
 		ui-grid-edit

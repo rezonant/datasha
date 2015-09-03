@@ -1,7 +1,7 @@
 <div style="position:relative;height:100%;">
 	<div ng-show="!editing">
 		<div ng-click="editing = true" 
-			 style="font-family: monospace; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+			 style="color: #999; font-family: monospace; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
 			 >{{query.text}}</div>
 	</div>
 	<div ng-show="editing" style="position:relative;">
@@ -10,7 +10,9 @@
 
 		<div style="position:absolute;bottom:5px;right:20px;">
 			<md-button ng-click="editing = false" class="md-raised">Cancel</md-button>
-			<md-button ng-click="editing = false; query.run(currentQuery)" class="md-warn md-raised">Run</md-button>
+			
+			<md-button ng-show="!isQuery" ng-click="editing = false; query.run(currentQuery)" class="md-warn md-raised">Run</md-button>
+			<md-button ng-show="isQuery" ng-click="editing = false; query.run(currentQuery)" class="md-primary md-raised">Query</md-button>
 		</div>
 	</div>
 </div>

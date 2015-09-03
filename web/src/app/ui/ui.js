@@ -37,6 +37,19 @@ module.config(function($routeProvider) {
 		.otherwise('/');
 });
 
+module.directive('appSpinner', function() {
+	return {
+		restrict: 'E',
+		template: 
+			'<div class="sk-folding-cube selected">'
+				+ '<div class="sk-cube1 sk-cube"></div>'
+				+ '<div class="sk-cube2 sk-cube"></div>'
+				+ '<div class="sk-cube4 sk-cube"></div>'
+				+ '<div class="sk-cube3 sk-cube"></div>'
+		  + '</div>'
+	};
+});
+
 module.directive('dbPager', function() {
 	return {
 		restrict: 'E',
@@ -60,14 +73,15 @@ module.directive('dbPager', function() {
 	};
 });
 
-module.directive('dbQueryResults', function($templateCache) {
+module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 	return {
 		restrict: 'E',
 		templateUrl: '../src/app/ui/dbQueryResults.html',
 		scope: {
 			query: '=',
 			api: '=',
-			schemaContext: '='
+			schemaContext: '=',
+			message: '='
 		},
 		controller: function($scope) {
 			$scope.page = {
@@ -109,15 +123,25 @@ module.directive('dbQueryResults', function($templateCache) {
 					$scope.page.total = count;
 				});
 				
+				
+				$scope.$root.globalSpinner = true;
 				$scope.query.fetch($scope.page).then(function(items) {
 					
+					if (items.executed) {
+						$scope.execution = items;
+						$scope.gridOptions.data = [];
+						$scope.loading = false;
+						$scope.$root.globalSpinner = false;
+						return; 
+					}
+					
+					$scope.execution = null;
 					var firstItem = {};
 					
 					if (items.length > 0)
 						firstItem = items[0];
 					
 					$scope.gridOptions.columnDefs = [];
-					
 					$scope.gridOptions.columnDefs.push({ 
 						field: '__actions__',
 						displayName: '',
@@ -126,6 +150,21 @@ module.directive('dbQueryResults', function($templateCache) {
 						width: 40,
 						cellTemplate: '../src/app/ui/data/rowActions.html'
 					});
+					
+					$scope.rowMoreClicked = function(row, $event) {
+						
+						$mdDialog.show({
+							parent: angular.element(document.body),
+							targetEvent: $event,
+							templateUrl: '../src/app/ui/data/rowActionsPopout.html',
+							controller: function($scope) {
+								$scope.cancel = function() {
+									$mdDialog.hide();
+								}
+							}
+						});
+					}
+					
 					
 					for (var key in firstItem) {
 						var def = {
@@ -146,6 +185,10 @@ module.directive('dbQueryResults', function($templateCache) {
 					$scope.page.count = items.length;
 					$scope.gridOptions.data = items;
 					$scope.loading = false;
+					$scope.$root.globalSpinner = false;
+				}).catch(function() {
+					$scope.loading = false;	
+					$scope.$root.globalSpinner = false;
 				});
 			}
 	
@@ -180,6 +223,14 @@ module.directive('dbQueryBox', function() {
 				$scope.currentQuery = $scope.query.text;
 			});
 			
+			$scope.$watch('currentQuery', function() {
+				if (/\w*select /i.test($scope.currentQuery)) {
+					$scope.isQuery = true;
+				} else {
+					$scope.isQuery = false;
+				}
+			});
+			
 		}
 	};
 });
@@ -201,7 +252,6 @@ module.controller('ConnectionDetailsController', function ($scope, $location, $r
 	var cnx = domain.getConnection(id);
 	
 	if (!cnx) {
-		alert('Connection '+id+' is not active');
 		$location.path('/');
 		return;
 	}
@@ -250,7 +300,7 @@ module.controller('DatabaseDetailsController', function ($scope, $routeParams, $
 	
 });
 
-module.controller('TableDetailsController', function ($scope, $routeParams, $location, domain, api) {
+module.controller('TableDetailsController', function ($scope, $routeParams, $location, $mdDialog, domain, api) { 
 	
 	api.ready.then(function() {
 
@@ -283,7 +333,29 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 				name: tableName,
 				columns: columns
 			};
-			$scope.query = api.createQuery(cnx, dbName, 'SELECT * FROM '+tableName);
+			$scope.query = api.createQuery(cnx, dbName, 'SELECT * FROM '+tableName, function(e) {
+				var message = 'An unknown error has occurred.';
+				
+				if (e.message)
+					message = e.message;
+				
+				// Error
+				var alert = $mdDialog.alert()
+					.title('Error while fetching results!!!')
+					.content(message)
+					.ok('Close');
+
+				$mdDialog.show(alert)
+					.finally(function() {
+						alert = undefined;
+					});
+				
+
+				$scope.message = message;
+				$scope.$root.globalSpinner = false;
+				alert('FUCKIN DONE');
+				$scope.$digest();
+			});
 			
 		}).catch(function(err) {
 			alert('Error getting table '+tableName+' from db '+dbName+' on connection '+cnxId);
@@ -296,7 +368,8 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDialog, api) {
 	
 	$scope.$root.brand = {
-		name: 'DataForest.io'
+		name: 'dataforest.io',
+		commercial: false
 	};
 
 	var readyToInitialize = Promise.resolve();
@@ -307,10 +380,19 @@ module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $md
 		api.initialize();
 		
 		// Load the active connections from persistence
-		
+		 
 		$scope.$root.activeConnections = [];
 		var promises = [];
 		(window.persistedData.connections || []).forEach(function(cnx) {
+			
+			cnx.ready = api.getConnection(cnx.id, cnx.key).then(function() {
+				cnx.isReady = true;
+				cnx.isAlive = true;
+			}).catch(function() {
+				cnx.isReady = false;
+				cnx.isAlive = false;
+			});
+			cnx.isReady = false;
 			$scope.$root.activeConnections.push(cnx);
 		});
 
@@ -329,6 +411,13 @@ module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $md
 		// OK we're loaded
 
 		$scope.$root.loaded = true;
+		$('#app-loaded').show();
+		$('#app-loading').addClass('done');
+		
+		$timeout(function() {
+			$('#app-loading').hide();
+		}, 2000);
+		
 		api.setReady();
 		$scope.$root.$apply();
 
@@ -404,6 +493,7 @@ module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $md
 					};
 					
 					$scope.go = function() {
+						$scope.$root.globalSpinner = true;
 						if (!checkPassword($scope.password)) {
 							$scope.errorMessage = 'Invalid password. Please try again.';
 							return;
@@ -411,6 +501,7 @@ module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $md
 						
 						// Good password!
 						window.sessionStorage.dfPassword = $scope.password;
+						$scope.$root.globalSpinner = false;
 						$mdDialog.hide();
 						resolve();
 					};
@@ -481,9 +572,15 @@ module.controller('ConnectDialogController', function ($scope, $timeout, $mdSide
 	
 	$scope.connect = function(details) {
 		$scope.connecting = true;
+		$scope.$root.globalSpinner = true;
 		
 		api.establishConnection(details.type, details.host, details.port, details.user, details.pass).then(function(cnx) {
 			$mdDialog.hide();
+			
+			cnx.ready = Promise.resolve();
+			cnx.isReady = true;
+			cnx.isAlive = true;
+			cnx.isActive = true;
 			
 			$scope.$root.activeConnections.push(cnx);
 			//$scope.$root.activeConnection = cnx;
@@ -493,6 +590,7 @@ module.controller('ConnectDialogController', function ($scope, $timeout, $mdSide
 				window.persistedData.connections = [];
 			window.persistedData.connections.push(cnx);
 			$scope.$root.persistData();
+			$scope.$root.globalSpinner = false;
 			
 			//$scope.$root.$apply();
 		}).catch(function(err) {
@@ -506,6 +604,7 @@ module.controller('ConnectDialogController', function ($scope, $timeout, $mdSide
 				.finally(function() {
 					alert = undefined;
 				});
+			$scope.$root.globalSpinner = false;
 		});
 	};
 });
@@ -537,41 +636,146 @@ module.controller('LeftSidebarController', function ($scope, $timeout, $location
 		
 	});
 	
-	$scope.selectConnection = function(cnx) {
-		
-		if ($scope.activeConnection && $scope.activeConnection.id === cnx.id) {
-			return Promise.resolve();
-		}
-		
-		return api.getDatabases(cnx.id, cnx.key).then(function(dbs) {
-			var connection = $.extend({}, cnx);
+	$scope.deleteConnection = function(cnx, $event) {
+		var alert = $mdDialog.confirm()
+			.title('Remove connection '+cnx.label+'?')
+			.content('Are you sure you wish to remove this connection?')
+			.ok('Remove')
+			.cancel('Cancel')
 			
-			connection.databaseNames = dbs;
-			connection.databases = [];
-			connection.databaseNames.forEach(function(db) {
-				connection.databases.push({
-					name: db
+
+		$mdDialog.show(alert)
+			.then(function() {
+				api.deleteConnection(cnx.id)
+					.then(function() {})
+					.catch(function() {})
+					.then(function() { 
+						var cnxs = [];
+						$scope.$root.activeConnections.forEach(function(cnx2) {
+							if (cnx.id == cnx2.id)
+								return;
+							cnxs.push(cnx2);
+						});
+
+						$scope.$root.activeConnections = cnxs;
+						window.persistedData.connections = $scope.$root.activeConnections.slice();
+						$scope.$root.persistData();
+					});
+			});
+	};
+	
+	$scope.selectConnection = function(cnx, $event) {
+		
+		$scope.selectedTab = 1;	
+		$scope.activeConnection = null;
+		$scope.$root.globalSpinner = true;
+		
+		return cnx.ready.then(function() {
+			return $timeout(750);
+		}).then(function() {
+			if (cnx.isAlive)
+				return;
+			
+			// Re-establish the connection
+
+			return new Promise(function(resolve, reject) {
+				$mdDialog.show({
+					parent: angular.element(document.body),
+					targetEvent: $event,
+					templateUrl: '../src/app/ui/passwordDialog.html',
+					controller: function($scope) {
+
+						$scope.title = 'Reconnect to '+cnx.label;
+						$scope.message =  
+							'The selected connection has become inactive. You must provide '
+							+ 'the password to reconnect.';
+
+						$scope.go = function(password) {
+							
+							$scope.$root.globalSpinner = true;
+							api.establishConnection(cnx.type, cnx.host, cnx.port, cnx.username, password)
+								.then(function(newConnection) {
+
+									cnx.id = newConnection.id;
+									cnx.key = newConnection.key;
+									cnx.isAlive = true;
+									cnx.isReady = true;
+
+									$mdDialog.hide();
+									$scope.$root.persistData();
+									$scope.$root.globalSpinner = false;
+
+									resolve();
+								})
+								.catch(function() {
+									$mdDialog.hide();
+									var alert = $mdDialog.alert()
+										.title('Failed to connect')
+										.content('Could not re-establish connection.')
+										.ok('Close');
+
+									$mdDialog.show(alert)
+										.finally(function() {
+											alert = undefined;
+											reject();
+										});
+									$scope.$root.globalSpinner = false;
+								});
+						};
+
+						$scope.cancel = function() {
+							$mdDialog.hide();
+							reject();
+						};
+					}
 				});
 			});
 			
-			$scope.activeConnection = connection;
-			$scope.selectedTab = 1;	
+		}).then(function() {
+			
+			if ($scope.activeConnection && $scope.activeConnection.id === cnx.id) {
+				return Promise.resolve();
+			}
+			
+
+			return api.getDatabases(cnx.id, cnx.key).then(function(dbs) {
+				var connection = $.extend({}, cnx);
+
+				connection.databaseNames = dbs;
+				connection.databases = [];
+				connection.databaseNames.forEach(function(db) {
+					connection.databases.push({
+						name: db
+					});
+				});
+
+
+				$scope.$root.globalSpinner = false;
+				$scope.activeConnection = connection;
+			});
 		});
-		
 	};
 	
 	$scope.selectDb = function(db) {
 		var cnx = $scope.activeConnection;
 		
+		$scope.selectedTab = 2;	
+		
 		if ($scope.activeDb && $scope.activeDb.name === db) 
 			return Promise.resolve();
 		
-		return api.getTables(cnx.id, db, cnx.key).then(function(tables) {
-			$scope.$root.activeDb = {
+		$scope.activeDb = null;
+		$scope.$root.globalSpinner = true;
+		
+		return $timeout(750).then(function() {
+			return api.getTables(cnx.id, db, cnx.key);			
+		}).then(function(tables) {
+			$scope.activeDb = {
 				name: db,
 				tables: tables
 			};
-			$scope.selectedTab = 2;
+			
+			$scope.$root.globalSpinner = false;
 		});
 	};
 	

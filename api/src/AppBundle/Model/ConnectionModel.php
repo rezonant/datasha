@@ -16,7 +16,44 @@ class ConnectionModel {
 	private $label;
 	private $key;
 	private $databases = array();
+	private $username;
+	private $host; 
+	private $port;
+	private $type;
 	
+	function getType() {
+		return $this->type;
+	}
+
+	function setType($type) {
+		$this->type = $type;
+	}
+	
+	function getPort() {
+		return $this->port;
+	}
+
+	function setPort($port) {
+		$this->port = $port;
+	}
+	
+	function getUsername() {
+		return $this->username;
+	}
+
+	function getHost() {
+		return $this->host;
+	}
+
+	function setUsername($username) {
+		$this->username = $username;
+	}
+
+	function setHost($hostName) {
+		$this->host = $hostName;
+	}
+
+		
 	function getId() {
 		return $this->id;
 	}

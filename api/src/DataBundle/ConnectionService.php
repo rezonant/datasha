@@ -81,6 +81,16 @@ class ConnectionService {
 		return $this->getStore()->get($id);
 	}
 	
+	public function deleteConnection($id)
+	{
+		$conn = $this->getConnection($id);
+		
+		if (!$conn)
+			return;
+		
+		$this->getStore()->remove($conn);
+	}
+	
 	/**
 	 * Retrieve a driver object for the given type
 	 * 

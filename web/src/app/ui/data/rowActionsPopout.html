@@ -1,0 +1,60 @@
+<md-dialog aria-label="Actions" style="width:30em;">
+	<md-dialog-content>
+
+		<div ng-show="going">
+			
+			<app-spinner></app-spinner>
+			
+		</div>
+		<div ng-show="!going">
+			
+			<div class="actions-bar">
+				<div>
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">edit</md-icon>
+					</md-button>
+					edit
+				</div>
+				<div>
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">delete</md-icon>
+					</md-button>
+					delete
+				</div>
+				<div>
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">share</md-icon>
+					</md-button>
+					associations
+				</div>
+				<div>
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">exit_to_app</md-icon>
+					</md-button>
+					stash
+				</div>
+				<div>
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">find_in_page</md-icon>
+					</md-button>
+					more like this
+				</div>
+				<div>
+					<md-button class="md-icon-button">
+						<md-icon md-font-library="material-icons">favorite_outline</md-icon>
+					</md-button>
+					bookmark
+				</div>
+			</div>
+		</div>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<div ng-show="going">
+			
+		</div>
+		<div ng-show="!going">
+			<md-button ng-click="cancel()">Close</md-button>
+		</div>
+	</div>
+</md-dialog>

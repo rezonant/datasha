@@ -4,6 +4,9 @@
 		<div ng-show="connecting">
 			<div class="md-title">Please wait...</div>
 			<em>Establishing connection to {{newConnection.user}}@{{newConnection.host}}...</em>
+			
+			<app-spinner></app-spinner>
+			
 		</div>
 		<div ng-show="!connecting">
 			<div class="md-title">New Connection</div>

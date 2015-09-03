@@ -24,6 +24,7 @@ module.exports = function(grunt) {
 				'build/components/angular-ui-grid/ui-grid.css',
 				'build/components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
 				'build/components/angular-bootstrap-datetimepicker/src/css/datetimepicker.css',
+				'build/components/SpinKit/css/spinkit.css'
 			],
 
 			dest: 'build/css/platform.css'
@@ -64,20 +65,52 @@ module.exports = function(grunt) {
     },
  
     watch: {
-    	main: {
-			files: [
-				'Gruntfile.js',
-				'src/**/*.js',
-				'html/**/*.html',
-				'css/**/*.scss',
-				'brand/**/*.html',
-				'brand/**/*.css',
-				'app.html' 
-			],
-			tasks: ['default'],
+		gruntfile: {
+			files: [ 'Gruntfile.js' ],
 			options: {
 				reload: true
-			}
+			},
+			tasks: ['default', 'chmod']
+		},
+		
+		sass: {
+			files: [
+				'css/**/*.scss'
+			],
+			tasks: ['sass', 'chmod']
+		},
+		
+		js: {
+		
+			files: [
+				'src/**/*.js',		
+			],
+			tasks: ['browserify', 'chmod']
+		},
+		
+		componentsJS: {
+		
+			files: [
+				'build/components/**/*.js',
+			],
+			tasks: ['uglify', 'chmod']
+		},
+		
+		componentsCSS: {
+		
+			files: [
+				'build/components/**/*.css',
+			],
+			tasks: ['concat', 'chmod']
+		},
+		
+    	html: {
+			files: [
+				'html/**/*.html',
+				'brand/**/*.html',
+				'app.html' 
+			],
+			tasks: ['copy', 'chmod']
 		}
     },
 

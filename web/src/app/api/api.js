@@ -50,7 +50,7 @@ module.factory('api', function($rootScope, $http) {
 		
 		getConnection: function(id, key) {
 			var self = this;
-			return $http.post(endpoint+'/connections/'+id+'/schema', {
+			return $http.post(endpoint+'/connections/'+id, {
 				key: key
 			}).then(function(result) {
 				var connection = result.data;
@@ -58,6 +58,10 @@ module.factory('api', function($rootScope, $http) {
 				
 				return connection;
 			});
+		},
+		
+		deleteConnection: function(id) {
+			return this.delete('/connections/'+id);
 		},
 		
 		get: function(url) {
@@ -76,7 +80,7 @@ module.factory('api', function($rootScope, $http) {
 			return $http.put(endpoint+url, data);
 		},
 		
-		createQuery: function(cnx, dbName, queryText) {
+		createQuery: function(cnx, dbName, queryText, errorFunc) {
 			var api = this;
 			var db = new Database(dbName);
 			
@@ -85,10 +89,13 @@ module.factory('api', function($rootScope, $http) {
 				connection: cnx,
 				db: db,
 				api: api,
+				onError: errorFunc,
+				
 				count: function() {
 					if (!/^select /i.test(this.text))
-						return undefined;
+						return Promise.resolve(0);
 					var countQuery = db.getCountQuery(this.text);
+					var self = this;
 					
 					return api
 						.executeQuery(this.connection, this.db, countQuery)
@@ -99,12 +106,26 @@ module.factory('api', function($rootScope, $http) {
 							
 							var counter = items[0];
 							return counter.count;
+						})
+						.catch(function(e) {
+							return 0;
 						});
 				},
 				
 				fetch: function(page) {
+					var self = this;
 					var query = db.getPagedQuery(this.text, page);
-					return api.executeQuery(this.connection, this.db, query);
+					var result = 
+						api.executeQuery(this.connection, this.db, query)
+							.then(function(r) {
+								return r;
+							})
+							.catch(function(e) {
+								self.onError(e);
+								throw e;
+							});
+							
+					return result;
 				}
 			}
 		},
@@ -120,6 +141,8 @@ module.factory('api', function($rootScope, $http) {
 				key: cnx.key
 			}).then(function(result) {
 				return result.data;
+			}).catch(function(result) {
+				throw result.data;
 			});
 		},
 

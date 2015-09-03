@@ -41,8 +41,13 @@ class MySQLDriver extends DatabaseDriver {
 			throw new \Exception('MySQL Error: '.$conn->error);
 		}
 		
-		if ($result === true)
+		if ($result === true) {
+			return (object)array(
+				'executed' => true,
+				'rowsAffected' => $conn->affected_rows
+			);
 			return $result;
+		}
 		
 		// Results
 		
