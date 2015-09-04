@@ -315,6 +315,7 @@ module.controller('ConnectionDetailsController', function ($scope, $location, $r
 			{
 				field: 'name',
 				displayName: 'Name',
+				minWidth: 100,
 				cellTemplate: '../src/app/ui/data/dbListName.html'
 			},
 			{
@@ -372,6 +373,7 @@ module.controller('DatabaseDetailsController', function ($scope, $routeParams, $
 			{
 				field: 'name',
 				displayName: 'Name',
+				minWidth: 100,
 				cellTemplate: '../src/app/ui/data/tableListName.html'
 			},
 			{

@@ -24,6 +24,19 @@ body {
 	}
 }
 
+
+db-query-results {
+	.ui-grid {
+		position:absolute;
+		top:3em;
+		left:0;
+		right:0;
+		bottom:0;
+		background: white;
+		height: auto;
+		width: 100%;
+	}
+}
 .md-list-item-tag {
 	font-size:80%;
 	font-weight:bold;
