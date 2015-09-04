@@ -24,6 +24,24 @@ body {
 	}
 }
 
+.ui-grid {
+	.foreign {
+		color: green;
+	}
+	
+	.bool {
+		font-weight: bold;
+		color: #296A6F;
+	}
+	
+	.datetime {
+		text-align:right;
+	}
+	
+	.id {
+		font-style: oblique;
+	}
+}
 
 db-query-results {
 	.ui-grid {

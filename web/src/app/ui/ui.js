@@ -93,6 +93,60 @@ module.filter('rowCount', function() {
 		return input+label;
     };
 });
+module.filter('shortGuid', function() {
+    return function(input) {
+		if (!input)
+			return '';
+		return input.slice(0, 9)+'...';
+    };
+});
+
+module.filter('dateTime', function($sce) {
+    return function(input) {
+		
+		if (!input)
+			return 'Never'; 
+		
+		var date = new Date(input);
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+					  'Nov', 'Dec'];
+		var month = months[date.getMonth() - 1];
+		var hour = date.getHours();
+		var ampm = 'AM';
+		
+		if (hour == 0) {
+			hour = 12;
+			ampm = 'AM';
+		} else if (hour > 12) {
+			hour -= 12;
+			ampm = 'PM';
+		} 
+		
+		var year = date.getYear() + 1900;
+		var timeDetails = '';
+		
+		if (minutes > 0) {
+			var minutes = (date.getMinutes() < 10 ? '0':'')+date.getMinutes();
+			timeDetails += ':'+minutes;
+		}
+		
+		if (seconds > 0) {
+			var seconds = (date.getSeconds() < 10 ? '0':'')+date.getSeconds();
+			timeDetails += ':'+seconds;
+		}
+		
+		if (timeDetails !== '')
+			timeDetails += ' ';
+		
+		return hour+timeDetails+ampm+' • '+month+' '+date.getDate()+' '+year;
+    };
+});
+
+module.filter('trueFalse', function() {
+    return function(input) {
+		return input ? 'true' : 'false';
+    };
+});
 
 module.directive('dbPager', function() {
 	return {
@@ -215,8 +269,49 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 						var def = {
 							displayName: key,
 							field: key,
-							width: 210
+							width: 210,
+							cellClass: ''
 						};
+					
+						var column = null;
+						
+						if ($scope.schemaContext) {
+							$scope.schemaContext.forEach(function(col) {
+								if (col.name == key) {
+									column = col;
+									return false;
+								}
+							});
+						}
+						
+						if (column) {
+							
+							if (column.type) {
+								if (/^(tiny|small|big)int/i.test(column.type)) {
+									def.type = 'number';
+								}
+
+								if (/^datetime$/i.test(column.type)) {
+									def.cellFilter = 'dateTime';
+									def.cellClass = 'datetime';
+								}
+
+								if (/^tinyint/i.test(column.type)) {
+									def.cellFilter = 'trueFalse';
+									def.cellClass = 'bool';
+									def.width = '90';
+								}
+							}
+							
+							if (column.comment) {
+								if (/^\(DC2Type:guid\)$/i.test(column.comment)) {
+									// Doctrine2 guid
+									def.cellFilter = 'shortGuid';
+									def.width = 80;
+									def.cellClass += 'id ';
+								}
+							}
+						}
 						
 						if (false && /^id$/i.test(key)) {
 							// lazy, make this obey schemaHints
@@ -451,6 +546,9 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 				name: tableName,
 				columns: columns
 			};
+			
+			$scope.schema = columns;
+			
 			$scope.query = api.createQuery(cnx, dbName, 'SELECT * FROM '+tableName, function(e) {
 				var message = 'An unknown error has occurred.';
 				

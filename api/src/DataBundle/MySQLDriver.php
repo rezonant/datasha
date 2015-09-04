@@ -124,21 +124,28 @@ class MySQLDriver extends DatabaseDriver {
 		return $array;
 	}
 
+	public function quoteSchema($str) {
+		return '`'.str_replace('\'', '', str_replace('`', '', $str)).'`';
+	}
+	
 	public function getSchema(Connection $connection, $db, $table) {
-		$rows = $this->query($connection, $db, 'DESCRIBE `'.$table.'`');
+		$rows = $this->query($connection, $db, 'SHOW FULL COLUMNS FROM '.$this->quoteSchema($table));
 		$columns = array();
 		
 		foreach ($rows as $row) {
 			
 			$row = (array)$row;
-			
-			$columns[] = (object)array(
+			$description = (object)array(
 				'name' => $row['Field'],
 				'type' => $row['Type'],
 				'nullable' => $row['Null'] == 'YES',
 				'default' => $row['Default'],
+				'encoding' => $row['Collation'],
+				'comment' => $row['Comment'],
 				'auto' => strpos($row['Extra'], 'auto_increment')
 			);
+			
+			$columns[] = $description;
 		}
 		
 		return $columns;

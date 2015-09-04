@@ -37,6 +37,8 @@ module.factory('api', function($rootScope, $http) {
 			var self = this;
 			return $http.post(endpoint+'/connections/'+cnxId+'/schema/dbs/'+db+'/tables/'+table, {
 				key: key
+			}).then(function(result) {
+				return result.data;
 			});
 		},
 		

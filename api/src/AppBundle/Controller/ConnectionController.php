@@ -113,6 +113,18 @@ class ConnectionController extends BaseController {
 		return $model;
 	}
 	
+	private function modelForColumn($column)
+	{
+		$columnModel = new \AppBundle\Model\ColumnModel($column->name, $column->type);
+		$columnModel->setComment($column->comment);
+		$columnModel->setEncoding($column->encoding);
+		$columnModel->setAutoIncrement($column->auto);
+		$columnModel->setDefault($column->default);
+		$columnModel->setNullable($column->nullable);
+
+		return $columnModel;
+	}
+	
 	/**
 	 * @REST\Post("/connections/{id}/schema/dbs/{db}/tables/{tableName}")
 	 */
@@ -131,7 +143,7 @@ class ConnectionController extends BaseController {
 		$columns = array();
 		
 		foreach ($driver->getSchema($connection, $db, $tableName) as $column) {
-			$columnModel = new \AppBundle\Model\ColumnModel($column->name, $column->type);
+			$columnModel = $this->modelForColumn($column);
 			$columns[] = $columnModel;
 		}
 		
@@ -175,8 +187,7 @@ class ConnectionController extends BaseController {
 			$tableModel->setComment($status->comment);
 			
 			foreach ($driver->getSchema($connection, $db, $tableName) as $column) {
-				$columnModel = new \AppBundle\Model\ColumnModel($column->name, $column->type);
-
+				$columnModel = $this->modelForColumn($column);
 				$tableModel->addColumn($columnModel);
 			}
 
