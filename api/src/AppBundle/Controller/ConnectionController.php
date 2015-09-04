@@ -75,7 +75,17 @@ class ConnectionController extends BaseController {
 			return new Response('{"message":"Invalid key"}', 400);
 		
 		$driver = $this->connections->getDriver($connection->getType());
-		return $driver->getDatabases($connection);
+		$dbs = array();
+		
+		foreach ($driver->getDatabases($connection) as $dbName) {
+			$status = $driver->getDatabaseStatus($connection, $dbName);
+			$model = new DatabaseModel($dbName);
+			$model->setSize($status->size);
+			$model->setTableCount($status->tableCount);
+			$dbs[] = $model;
+		}
+		
+		return $dbs;
 	}
 	
 	/**
@@ -147,6 +157,23 @@ class ConnectionController extends BaseController {
 		foreach ($driver->getTables($connection, $db) as $tableName) {
 			$tableModel = new \AppBundle\Model\TableModel($tableName);
 
+			$status = $driver->getTableStatus($connection, $db, $tableName);
+			
+			$tableModel->setRows($status->rows);
+			$tableModel->setSize($status->size);
+			$tableModel->setIndexSize($status->indexLength);
+			$tableModel->setDataSize($status->dataLength);
+			$tableModel->setEngine($status->engine);
+			$tableModel->setVersion($status->version);
+			$tableModel->setFormat($status->format);
+			$tableModel->setAverageRowSize($status->avgRowLength);
+			$tableModel->setAutoIncrement($status->autoIncrement);
+			$tableModel->setCreated($status->created);
+			$tableModel->setUpdated($status->updated);
+			$tableModel->setChecked($status->checked);
+			$tableModel->setChecksum($status->checksum);
+			$tableModel->setComment($status->comment);
+			
 			foreach ($driver->getSchema($connection, $db, $tableName) as $column) {
 				$columnModel = new \AppBundle\Model\ColumnModel($column->name, $column->type);
 

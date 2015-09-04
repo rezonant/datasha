@@ -4,6 +4,9 @@ parameters:
 #    parameter_name: value
 
 services:
+    jms_serializer.naming_strategy:
+        class: 'AppBundle\IdenticalUnlessSpecifiedPropertyNamingStrategy'
+
     app.connections:
         class: DataBundle\ConnectionService
         arguments: ["@session"]

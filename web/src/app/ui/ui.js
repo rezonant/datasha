@@ -50,6 +50,50 @@ module.directive('appSpinner', function() {
 	};
 });
 
+module.filter('fileSize', function() {
+    return function(input) {
+        var value = 0.0 + parseInt(input);
+        var label = " bytes";
+
+        if (value > 1024) {
+            value = value / 1024.0;
+            label = " KB";
+        }
+
+        if (value > 1024) {
+            value = value / 1024.0;
+            label = " MB";
+        }
+
+        if (value > 1024) {
+            value = value / 1024.0;
+            label = " GB";
+        }
+
+        if (value > 1024) {
+            value = value / 1024.0;
+            label = " TB";
+        }
+
+        return Math.round(value*100)/100.0+label;
+    };
+});
+
+module.filter('rowCount', function() {
+    return function(input) {
+		var label = '';
+		if (input > 1000000) {
+			input = Math.floor(input / 1000000.0);
+			label = "M";
+		} else if (input > 1000) {
+			input = Math.floor(input / 1000.0);
+			label = "K";
+		}
+		
+		return input+label;
+    };
+});
+
 module.directive('dbPager', function() {
 	return {
 		restrict: 'E',
@@ -148,6 +192,7 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 						enableSorting: false,
 						enableHiding: true,
 						width: 40,
+						enableColumnMenu: false,
 						cellTemplate: '../src/app/ui/data/rowActions.html'
 					});
 					
@@ -263,14 +308,41 @@ module.controller('ConnectionDetailsController', function ($scope, $location, $r
 	];
 	
 	$scope.$root.pageTitle = cnx.label;
+	$scope.gridOptions = {
+	
+		enableGridMenu: true,
+		columnDefs: [
+			{
+				field: 'name',
+				displayName: 'Name',
+				cellTemplate: '../src/app/ui/data/dbListName.html'
+			},
+			{
+				field: 'tableCount',
+				displayName: 'Tables',
+				cellFilter: 'rowCount',
+				type: 'number',
+				width: '100'
+			},
+			{
+				field: 'size',
+				displayName: 'Size',
+				cellFilter: 'fileSize',
+				type: 'number',
+				width: '100'
+			}
+			
+		]	
+	};
 	
 	api.getDatabases(cnx.id, cnx.key).then(function(dbs) {
 		$scope.databases = dbs;
+		$scope.gridOptions.data = dbs;
 	});
 	
 });
 	
-module.controller('DatabaseDetailsController', function ($scope, $routeParams, $location, domain, api) {
+module.controller('DatabaseDetailsController', function ($scope, $routeParams, $location, $templateCache, domain, api) {
 	
 	var cnxId = $routeParams.cnx;
 	var dbName = $routeParams.db;
@@ -294,7 +366,51 @@ module.controller('DatabaseDetailsController', function ($scope, $routeParams, $
 		name: dbName
 	};
 	
+	$scope.gridOptions = {
+		enableGridMenu: true,
+		columnDefs: [
+			{
+				field: 'name',
+				displayName: 'Name',
+				cellTemplate: '../src/app/ui/data/tableListName.html'
+			},
+			{
+				field: 'rows',
+				displayName: 'Rows',
+				cellFilter: 'rowCount',
+				type: 'number',
+				width: '100'
+			},
+			{
+				field: 'size',
+				displayName: 'Size',
+				cellFilter: 'fileSize',
+				type: 'number',
+				width: '100'
+			},
+			{
+				field: 'engine',
+				displayName: 'Engine',
+				width: '100'
+			},
+			{
+				field: 'format',
+				displayName: 'Format',
+				width: '100'
+			},
+			{
+				field: 'version',
+				displayName: 'Version',
+				width: '100'
+			},
+			
+		]
+	};
+	
+	$scope.gridLoading = true;
 	api.getTables(cnx.id, dbName, cnx.key).then(function(tables) {
+		$scope.gridOptions.data = tables;
+		$scope.gridLoading = false;
 		$scope.tables = tables;
 	});
 	
@@ -411,9 +527,9 @@ module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $md
 		// OK we're loaded
 
 		$scope.$root.loaded = true;
+		
 		$('#app-loaded').show();
 		$('#app-loading').addClass('done');
-		
 		$timeout(function() {
 			$('#app-loading').hide();
 		}, 2000);
@@ -664,6 +780,16 @@ module.controller('LeftSidebarController', function ($scope, $timeout, $location
 			});
 	};
 	
+	$scope.goToConnectionPage = function(cnx) {
+		$mdSidenav('left').close();
+		$location.path('/connections/'+cnx.id);
+	};
+	
+	$scope.goToDatabasePage = function(cnx, db) {
+		$mdSidenav('left').close();
+		$location.path('/connections/'+cnx.id+'/dbs/'+db.name);
+	};
+	
 	$scope.selectConnection = function(cnx, $event) {
 		
 		$scope.selectedTab = 1;	
@@ -741,12 +867,10 @@ module.controller('LeftSidebarController', function ($scope, $timeout, $location
 			return api.getDatabases(cnx.id, cnx.key).then(function(dbs) {
 				var connection = $.extend({}, cnx);
 
-				connection.databaseNames = dbs;
-				connection.databases = [];
-				connection.databaseNames.forEach(function(db) {
-					connection.databases.push({
-						name: db
-					});
+				connection.databases = dbs;
+				connection.databaseNames = [];
+				connection.databases.forEach(function(db) {
+					connection.databaseNames.push(db.name);
 				});
 
 

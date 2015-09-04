@@ -4,6 +4,31 @@ body {
 	height:initial;
 	background:white;
 	color:black;
+	user-select: none;
+
+}
+
+/**
+ * User selection
+ */
+body {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	
+	[ui-grid] {
+		user-select: initial;
+		-webkit-user-select: initial;
+		-moz-user-select: initial;
+		-ms-user-select: initial;
+	}
+}
+
+.md-list-item-tag {
+	font-size:80%;
+	font-weight:bold;
+	margin-left: 1em;
+	color:#888;
 }
 
 #app-loading {
@@ -271,15 +296,20 @@ section#main {
 .page-backdrop {
 	position: fixed;
 	background-attachment: fixed;
-	top: 4.5em;
+	top: 4.5em; 
 	left: 0;
 	right: 0;
 	bottom: 0;
 	overflow-y: auto;
 } 
 
+.flex-actions {
+	display: flex;
+	justify-content: space-around;
+}
+
 .page-backdrop-forest {
-	background-image: url(http://7-themes.com/data_images/out/49/6938356-dark-blue-forest.jpg);
+	background-image: url(../img/6938356-dark-blue-forest.jpg);
 }
 
 md-tabs.hidden-tabs {
@@ -292,6 +322,15 @@ md-tabs.hidden-tabs {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		
+		.md-button {
+			min-width: initial;
+			margin: 0 -6px;
+			text-transform: initial;
+			font-weight: normal;
+			font-size: inherit;
+		}
+		
 	}
 	
 	md-tabs-wrapper {

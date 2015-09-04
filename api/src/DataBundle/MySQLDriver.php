@@ -15,7 +15,72 @@ class MySQLDriver extends DatabaseDriver {
 	public function getName() {
 		return 'MySQL';
 	}
+	
+	public function getDatabaseStatus(Connection $connection, $db) {
+		
+		$sizeResults = $this->query($connection, 'information_schema', 
+			'SELECT SUM(data_length + index_length) `size`'
+			. 'FROM `TABLES` '
+			. 'WHERE `table_schema` = '.$this->quote($db)
+			. 'GROUP BY `table_schema` '
+		);
+		
+		$size = 0;
+		if (count($sizeResults) > 0) {
+			$sizeRow = $sizeResults[0];
+			$size = $sizeRow->size;
+		}
+		
+		
+		$tablesResults = $this->query($connection, 'information_schema', 
+			'SELECT COUNT(*) `count`'
+			. 'FROM `TABLES` '
+			. 'WHERE `table_schema` = '.$this->quote($db)
+		);
+		
+		$tableCount = 0;
+		if (count($tablesResults) > 0) {
+			$tablesRow = $tablesResults[0];
+			$tableCount = $tablesRow->count;
+		}
+		
+		return (object)array(
+			'name' => $db,
+			'size' => $size,
+			'tableCount' => $tableCount
+		);
+	}
 
+	public function getTableStatus(Connection $connection, $db, $table) {
+		$statusResults = $this->query($connection, $db, 
+				'SHOW TABLE STATUS WHERE `Name` = '.$this->quote($table));
+		
+		if (count($statusResults) == 0) {
+			return null;
+		}
+		
+		$status = $statusResults[0];
+		
+		return (object)array(
+			'name' => $table,
+			'rows' => $status->Rows,
+			'version' => $status->Rows,
+			'engine' => $status->Engine,
+			'format' => $status->Row_format,
+			'avgRowLength' => $status->Avg_row_length,
+			'dataLength' => $status->Data_length,
+			'indexLength' => $status->Index_length,
+			'size' => $status->Data_length + $status->Index_length,
+			'autoIncrement' => $status->Auto_increment,
+			'created' => $status->Create_time,
+			'updated' => $status->Update_time,
+			'checked' => $status->Check_time,
+			'checksum' => $status->Checksum,
+			'createOptions' => $status->Create_options,
+			'comment' => $status->Comment
+		);
+	}
+	
 	/**
 	 * @param Connection $connection
 	 * @param string $db
