@@ -1,9 +1,66 @@
+
+
+<md-toolbar flex style="margin:-8px;position:absolute;top:0;left:0;right:0;width:auto;">
+	<div class="md-toolbar-tools">
+		
+		<md-button ng-click="showInsert()" class="md-icon-button" aria-label="Insert">
+			<md-icon md-font-library="material-icons">add</md-icon>
+		</md-button>
+		
+		<span flex></span>
+		
+		<md-button ng-click="showSchema($event)" class="md-icon-button" aria-label="Schema">
+			<md-icon md-font-library="material-icons">perm_data_setting</md-icon>
+		</md-button>
+		
+		<md-button ng-click="showSearch($event)" class="md-icon-button" aria-label="Search">
+			<md-icon md-font-library="material-icons">search</md-icon>
+		</md-button>
+
+		<md-menu md-offset="0 70">
+			
+			<md-button class="md-icon-button" aria-label="More Options" ng-click="$mdOpenMenu($event)">
+				<md-icon md-font-library="material-icons">more_vert</md-icon>
+			</md-button>
+			
+			<md-menu-content width="4">
+				<md-menu-item>
+					<md-button ng-click="showRename($event)">
+						<md-icon md-font-library="material-icons">label</md-icon>
+						Rename
+					</md-button>
+				</md-menu-item>
+				<md-menu-item>
+					<md-button ng-click="showClone($event)">
+						<md-icon md-font-library="material-icons">content_copy</md-icon>
+						Clone
+					</md-button>
+				</md-menu-item>
+				<md-menu-divider></md-menu-divider>
+				<md-menu-item>
+					<md-button ng-click="clearAll($event)">
+						<md-icon md-font-library="material-icons">clear_all</md-icon>
+						Empty
+					</md-button>
+				</md-menu-item>
+				<md-menu-item>
+					<md-button ng-click="drop($event)">
+						<md-icon md-font-library="material-icons">close</md-icon>
+						Drop
+					</md-button>
+				</md-menu-item>
+			</md-menu-content>
+		</md-menu>
+		
+	</div>
+</md-toolbar>
+
 <db-query-box 
 	query="query"
-	style="position:absolute;top:0em;left:0;right:0;z-index:1;"></db-query-box>
+	style="position:absolute;top:4.5em;left:0;right:0;z-index:1;"></db-query-box>
 <db-query-results 
 	query="query"
 	paging="paging"
 	message="message"
 	schema-context="schema"
-	style="position:absolute;top:1.5em;left:0;right:0;bottom:0.5em;height:auto;"></db-query-results>
+	style="position:absolute;top:6em;left:0;right:0;bottom:0.5em;height:auto;"></db-query-results>

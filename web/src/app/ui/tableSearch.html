@@ -1,0 +1,164 @@
+<md-dialog aria-label="Actions" style="width:70em;">
+	<md-dialog-content>
+		
+		<strong>Search {{db.name}}.{{table.name}}</strong>
+		
+		<form ng-submit="search()">
+			<md-list class="table-search">
+				<md-list-item class="top-aligned" 
+							  ng-repeat="column in schema" 
+							  ng-show="!previewMode || column.checked"
+							  ng-class="{'preview': previewMode}"
+							  style="padding-left:32px;">
+					<div ng-repeat="v in [0]" ng-show="!previewMode">
+						<md-checkbox ng-model="column.checked" 
+									 style="margin-right: 4px; position:absolute;top:10px;left:-32px;"></md-checkbox>
+					</div>
+					<md-list-item-text>
+						<span ng-show="!previewMode">{{column.name}}</span>
+						<strong ng-show="previewMode">`{{column.name}}`</strong>
+
+						<span ng-show="previewMode" style="color: #0026FF;">{{column.operator}}</span>
+						<span ng-show="previewMode" style="font-family: monospace; color: #AD5503;">
+							{{column.value}}
+						</span>
+
+						<md-select ng-model="column.operator" style="margin: 0 0 0 1em; display: inline-flex;" ng-show="!previewMode">
+							<md-option ng-value="'='">=</md-option>
+							<md-option ng-value="'!='">!=</md-option>
+							<md-option ng-value="'&gt;'">&gt;</md-option>
+							<md-option ng-value="'&lt;'">&lt;</md-option>
+							<md-option ng-value="'LIKE'">LIKE</md-option>
+							<md-option ng-value="'IN'">IN</md-option>
+							<md-option ng-value="'NOT IN'">NOT IN</md-option>
+						</md-select>
+
+						<div ng-switch="column.logicalType" class="value-selector" ng-show="!previewMode">
+							<md-select ng-model="column.value" ng-switch-when="bool">
+								<md-option ng-value="1">true</md-option>
+								<md-option ng-value="0">false</md-option>
+							</md-select>
+							<md-input-container ng-switch-default>
+								<label>Value</label>
+								<input ng-model="column.value" type="text" style="width: 10em;"
+									   ng-click="column.checked = true" />
+							</md-input-container>
+						</div>
+
+					</md-list-item-text>
+					<span flex></span>
+
+					<md-menu md-offset="0 70">
+						<md-button 
+								class="md-icon-button md-button-tight" 
+								ng-click="$mdOpenMenu($event)"
+								ng-show="!previewMode"
+								aria-label="More Options">
+							<md-icon md-font-family="material-icons">more_vert</md-icon>
+						</md-button>
+
+						<md-menu-content width="4">
+
+							<md-menu-item ng-show="column.nullable">
+								<md-button ng-click="showEdit($event)">
+									<md-icon md-font-library="material-icons">clear</md-icon>
+									NULL
+								</md-button>
+							</md-menu-item>
+							<div ng-switch="column.type">
+								<div ng-switch-when="datetime">
+
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now
+										</md-button>
+									</md-menu-item>
+									<md-divider></md-divider>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now + 1 hour
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now + 1 day
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now + 1 week
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now + 1 month
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now + 1 year
+										</md-button>
+									</md-menu-item>
+									<md-divider></md-divider>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now - 1 hour
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now - 1 day
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now - 1 week
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now - 1 month
+										</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Now - 1 year
+										</md-button>
+									</md-menu-item>
+									<md-divider></md-divider>
+									<md-menu-item>
+										<md-button ng-click="showEdit($event)">
+											<md-icon md-font-library="material-icons">av_timer</md-icon>
+											Zero Date (0000-00-00 00:00:00)
+										</md-button>
+									</md-menu-item>
+								</div>
+							</div>
+						</md-menu-content>
+					</md-menu>
+				</md-list-item>
+			</md-list>
+		</form>
+		<div class="query-preview" ng-show="previewMode">{{previewQuery}}</div>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<md-button ng-click="cancel()">Cancel</md-button>
+		<md-button class="md-raised" ng-click="preview()">
+			<span ng-show="!previewMode">Preview</span>
+			<span ng-show="previewMode">Edit</span>
+		</md-button>
+		<md-button class="md-raised md-primary" ng-click="search()">Search</md-button>
+	</div>
+</md-dialog>

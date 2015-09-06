@@ -1,0 +1,62 @@
+<md-dialog aria-label="Actions" style="width:50em;">
+	<md-dialog-content>
+		
+		<strong>Schema for {{db.name}}.{{table.name}}</strong>
+		
+		<md-list>
+			<md-list-item ng-repeat="column in schema">
+				<md-list-item-text>
+					{{column.name}} 
+					<span style="color: #aaa;">{{column.type}}</span>
+					<div style="color: #aaa;margin-left:0.5em;">
+						<span ng-show="column.encoding" 
+							  class="light-tag" style="text-transform: initial;">{{column.encoding}}</span>
+						<span ng-show="column.nullable" class="light-tag">Nullable</span>
+						<span ng-show="column.autoIncrement" class="light-tag">Auto-Increment</span>
+						<span ng-show="column.autoIncrement" class="light-tag">
+							Default: 
+							<code ng-show="column.default">{{column.default}}</code>
+						</span>
+						
+						{{column.comment}}
+					</div>
+				</md-list-item-text>
+				
+				<span flex></span>
+				
+				
+				<md-menu md-offset="0 70">
+					<md-button class="md-icon-button md-button-tight" ng-click="$mdOpenMenu($event)" 
+							   aria-label="More Options">
+						<md-icon md-font-family="material-icons">more_vert</md-icon>
+					</md-button>
+
+					<md-menu-content width="4">
+						<md-menu-item>
+							<md-button ng-click="showEdit($event)">
+								<md-icon md-font-library="material-icons">edit</md-icon>
+								Edit
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button ng-click="showAddIndex($event)">
+								<md-icon md-font-library="material-icons">recent_actors</md-icon>
+								Index
+							</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button ng-click="drop($event)">
+								<md-icon md-font-library="material-icons">delete</md-icon>
+								Drop
+							</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
+			</md-list-item>
+		</md-list>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<md-button ng-click="cancel()">Close</md-button>
+	</div>
+</md-dialog>

@@ -1,6 +1,33 @@
+
+
+<md-toolbar flex style="margin:-8px;position:absolute;top:0;left:0;right:0;width:auto;">
+	<div class="md-toolbar-tools">
+		
+		<md-button class="md-icon-button" aria-label="Add Table">
+			<md-icon md-font-library="material-icons">add</md-icon>
+		</md-button>
+		
+		<span flex></span>
+		
+		<md-input-container>
+			<label>
+				<md-icon md-font-library="material-icons">search</md-icon>
+				Search
+			</label>
+			<input type="text" />
+		</md-input-container>
+		
+		
+		
+		<md-button class="md-icon-button" aria-label="More Options">
+			<md-icon md-font-library="material-icons">more_vert</md-icon>
+		</md-button>
+		
+	</div>
+</md-toolbar>
 <div
 	ng-class="{'grid-loading': loading}"
-	style="position:absolute;top:0em;left:0;right:0;bottom:0;background: white;width:100%;" 
+	style="position:absolute;top:4.5em;left:0;right:0;bottom:0;background: white;width:100%;" 
 	ui-grid="gridOptions" 
 	ui-grid-selection>
 </div>

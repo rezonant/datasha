@@ -528,7 +528,7 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 			$location.path('/');
 			return;
 		}
-		
+
 		$scope.$root.sidebarHints = {
 			connectionId: cnxId,
 			database: dbName
@@ -541,6 +541,214 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 		$scope.connection = cnx;
 		$scope.$root.pageTitle = tableName;
 			
+		$scope.showSchema = function($event) {
+			$mdDialog.show({
+				parent: angular.element(document.body),
+				targetEvent: $event,
+				templateUrl: '../src/app/ui/tableSchema.html',
+				locals: {
+					table: $scope.table,
+					schema: $scope.schema,
+					database: { name: dbName }
+				},
+				controller: function($scope, $mdDialog, table, schema, database) {
+					$scope.db = database;
+					$scope.table = table;
+					$scope.schema = schema;
+					$scope.cancel = function() {
+						$mdDialog.hide();
+					};
+				}
+			});
+		};
+		
+		$scope.showInsert = function($event) {
+				$mdDialog.show({
+				parent: angular.element(document.body),
+				targetEvent: $event,
+				templateUrl: '../src/app/ui/insertRows.html',
+				locals: {
+					table: $scope.table,
+					schema: $scope.schema,
+					database: { name: dbName },
+					runQuery: function(query) {
+						$scope.query.text = query;
+						$mdDialog.hide();
+					}
+				},
+				controller: function($scope, $mdDialog, table, schema, database, runQuery) {
+					
+					schema = angular.copy(schema);
+					schema.forEach(function(column) {
+						column.operator = 'LIKE';
+						column.logicalType = column.type;
+						
+						if (/^varchar/.test(column.type)) {
+							column.logicalType = 'string';
+						} else if (/^tinyint/.test(column.type)) {
+							column.logicalType = 'bool';
+						} else if (column.comment = '(DC2Type:guid)') {
+							column.logicalType = 'guid';
+						}
+					});
+					
+					$scope.db = database;
+					$scope.table = table;
+					$scope.schema = schema;
+					$scope.cancel = function() {
+						$mdDialog.hide();
+					};
+					
+					var resolveSpec = function() {
+						
+						var searchSpec = [];
+						$scope.schema.forEach(function(column) {
+							if (!column.checked)
+								return;
+							searchSpec.push({
+								name: column.name,
+								operator: column.operator,
+								value: column.value,
+								logicalType: column.logicalType
+							});
+						});
+					
+						return searchSpec;
+					};
+					
+					var generateQuery = function() {
+						
+						var spec = resolveSpec();
+						var query;
+						query = "INSERT INTO `"+$scope.table.name+"` ";
+						
+						var columnNames = [];
+						var clauses = [];
+						
+						spec.forEach(function(column) {
+							
+							columnNames.push('`'+column.name+'`');
+							
+							var clause = column.name + " = ";
+							
+							if (/^\d+$/g.test( column.value ))
+								clause += " "+column.value;
+							else
+								clause += " '"+column.value.replace(/'/g, '\\\'')+"'";
+							
+							clauses.push(clause);
+						});
+						
+						query += "(\n  "+columnNames.join(",\n  ")+"\n) VALUES (\n  "+clauses.join(",\n  ")+"\n)";
+						return query;
+					}
+					
+					$scope.preview = function() {
+						$scope.previewMode = !$scope.previewMode;
+						$scope.previewQuery = generateQuery();
+					};
+					
+					$scope.insert = function() {
+						alert('Not implemented yet');
+						//var query = generateQuery();
+						//runQuery(query);
+					};
+				}
+			});
+		}
+		
+		$scope.showSearch = function($event) {
+			$mdDialog.show({
+				parent: angular.element(document.body),
+				targetEvent: $event,
+				templateUrl: '../src/app/ui/tableSearch.html',
+				locals: {
+					table: $scope.table,
+					schema: $scope.schema,
+					database: { name: dbName },
+					runQuery: function(query) {
+						$scope.query.text = query;
+						$mdDialog.hide();
+					}
+				},
+				controller: function($scope, $mdDialog, table, schema, database, runQuery) {
+					
+					schema = angular.copy(schema);
+					schema.forEach(function(column) {
+						column.operator = 'LIKE';
+						column.logicalType = column.type;
+						
+						if (/^varchar/.test(column.type)) {
+							column.logicalType = 'string';
+						} else if (/^tinyint/.test(column.type)) {
+							column.logicalType = 'bool';
+						} else if (column.comment = '(DC2Type:guid)') {
+							column.logicalType = 'guid';
+						}
+					});
+					
+					$scope.db = database;
+					$scope.table = table;
+					$scope.schema = schema;
+					$scope.cancel = function() {
+						$mdDialog.hide();
+					};
+					
+					var resolveSpec = function() {
+						
+						var searchSpec = [];
+						$scope.schema.forEach(function(column) {
+							if (!column.checked)
+								return;
+							searchSpec.push({
+								name: column.name,
+								operator: column.operator,
+								value: column.value,
+								logicalType: column.logicalType
+							});
+						});
+					
+						return searchSpec;
+					};
+					
+					var generateQuery = function() {
+						
+						var spec = resolveSpec();
+						var query;
+						query = "SELECT * FROM `"+$scope.table.name+"`";
+						
+						if (spec.length > 0)
+							query += " WHERE\n     ";
+						
+						var clauses = [];
+						spec.forEach(function(column) {
+							var clause = column.name + " " + column.operator;
+							
+							if (/^\d+$/g.test( column.value ))
+								clause += " "+column.value;
+							else
+								clause += " '"+column.value.replace(/'/g, '\\\'')+"'";
+							
+							clauses.push(clause);
+						});
+						
+						query += clauses.join("\n AND ");
+						return query;
+					}
+					
+					$scope.preview = function() {
+						$scope.previewMode = !$scope.previewMode;
+						$scope.previewQuery = generateQuery();
+					};
+					
+					$scope.search = function() {
+						var query = generateQuery();
+						runQuery(query);
+					};
+				}
+			});
+		};
+		
 		api.getTableSchema(cnx.id, dbName, tableName, cnx.key).then(function(columns) {
 			$scope.table = {
 				name: tableName,
@@ -557,7 +765,7 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 				
 				// Error
 				var alert = $mdDialog.alert()
-					.title('Error while fetching results!!!')
+					.title('Error while fetching results!')
 					.content(message)
 					.ok('Close');
 
@@ -569,7 +777,6 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 
 				$scope.message = message;
 				$scope.$root.globalSpinner = false;
-				alert('FUCKIN DONE');
 				$scope.$digest();
 			});
 			
@@ -738,10 +945,6 @@ module.controller('ShellController', function ($scope, $timeout, $mdSidenav, $md
 				parent: angular.element(document.body),
 				//targetEvent: $event,
 				templateUrl: '../src/app/ui/setup.html',
-				locals: {
-
-				},
-
 				controller: function($scope) {
 					$scope.go = function() {
 						if ($scope.password1 != $scope.password2) {
