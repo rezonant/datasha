@@ -3,27 +3,38 @@
 		
 		<strong>Insert into {{db.name}}.{{table.name}}</strong>
 		
+		<div style="text-align:right;">
+			<md-button ng-click="addRowToFront()" ng-show="!previewMode">
+				Add row
+			</md-button>
+		</div>
 		<form ng-submit="insert()">
-			<md-list class="table-search">
-				<md-list-item class="top-aligned" 
-							  ng-repeat="column in schema" 
-							  ng-show="!previewMode || column.checked"
-							  ng-class="{'preview': previewMode}"
-							  style="padding-left:32px;">
-					<div ng-repeat="v in [0]" ng-show="!previewMode">
-						<md-checkbox ng-model="column.checked" 
-									 style="margin-right: 4px; position:absolute;top:10px;left:-32px;"></md-checkbox>
-					</div>
-					<md-list-item-text>
+			
+			<div ng-repeat="row in rows">
+				<md-list-item>
+					Row {{$index + 1}}
+					<span flex></span>
+					<md-button class="md-icon-button" ng-click="removeRow($index)">
+						<md-icon md-font-library="material-icons">clear</md-icon>
+					</md-button>
+				</md-list-item>
+				<md-divider></md-divider>
+				
+				<div style="display:inline-flex; padding-left:32px; width:20em;align-items:flex-start;"
+							ng-repeat="column in row.columns" 
+							ng-show="!previewMode || column.checked"
+							ng-class="{'preview': previewMode}">
+					<md-checkbox ng-show="!previewMode" ng-model="column.checked"></md-checkbox>
+					<div>
 						<span ng-show="!previewMode">{{column.name}}</span>
 						<strong ng-show="previewMode">`{{column.name}}`</strong>
 
 						=
-						
+
 						<span ng-show="previewMode" style="font-family: monospace; color: #AD5503;">
 							 '{{column.value}}'
 						</span>
-						
+
 						<div ng-switch="column.logicalType" class="value-selector" ng-show="!previewMode">
 							<md-select ng-model="column.value" ng-switch-when="bool">
 								<md-option ng-value="1">true</md-option>
@@ -36,111 +47,15 @@
 							</md-input-container>
 						</div>
 
-					</md-list-item-text>
-					<span flex></span>
-
-					<md-menu md-offset="0 70">
-						<md-button 
-								class="md-icon-button md-button-tight" 
-								ng-click="$mdOpenMenu($event)"
-								ng-show="!previewMode"
-								aria-label="More Options">
-							<md-icon md-font-family="material-icons">more_vert</md-icon>
-						</md-button>
-
-						<md-menu-content width="4">
-
-							<md-menu-item ng-show="column.nullable">
-								<md-button ng-click="showEdit($event)">
-									<md-icon md-font-library="material-icons">clear</md-icon>
-									NULL
-								</md-button>
-							</md-menu-item>
-							<div ng-switch="column.type">
-								<div ng-switch-when="datetime">
-
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now
-										</md-button>
-									</md-menu-item>
-									<md-divider></md-divider>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now + 1 hour
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now + 1 day
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now + 1 week
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now + 1 month
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now + 1 year
-										</md-button>
-									</md-menu-item>
-									<md-divider></md-divider>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now - 1 hour
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now - 1 day
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now - 1 week
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now - 1 month
-										</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Now - 1 year
-										</md-button>
-									</md-menu-item>
-									<md-divider></md-divider>
-									<md-menu-item>
-										<md-button ng-click="showEdit($event)">
-											<md-icon md-font-library="material-icons">av_timer</md-icon>
-											Zero Date (0000-00-00 00:00:00)
-										</md-button>
-									</md-menu-item>
-								</div>
-							</div>
-						</md-menu-content>
-					</md-menu>
-				</md-list-item>
-			</md-list>
+					</div>
+				</div>
+			</div>
 		</form>
+		<div style="text-align:right;">
+			<md-button ng-click="addRow()" ng-show="!previewMode">
+				Add row
+			</md-button>
+		</div>
 		<div class="query-preview" ng-show="previewMode">{{previewQuery}}</div>
 	</md-dialog-content>
 
@@ -150,6 +65,6 @@
 			<span ng-show="!previewMode">Preview</span>
 			<span ng-show="previewMode">Edit</span>
 		</md-button>
-		<md-button class="md-raised md-primary" ng-click="search()">Search</md-button>
+		<md-button class="md-raised md-warn" ng-click="insert()">Insert</md-button>
 	</div>
 </md-dialog>

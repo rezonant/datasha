@@ -1154,6 +1154,10 @@ md-content.full-height {
 	padding: 0.5em;
 	margin: 0.5em 0;
 	white-space: pre;
+	-webkit-user-select: initial;
+	-moz-user-select: initial;
+	-ms-user-select: initial;
+	user-select: initial;
 }
 
 textarea.queryBox {

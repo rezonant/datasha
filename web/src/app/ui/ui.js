@@ -191,14 +191,6 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 			$scope.loading = true;
 			
 			$scope.gridOptions = {
-				//expandableRowTemplate: '../src/app/ui/data/rowActions.html',
-				//expandableRowHeight: 150,
-				//expandableRowScope: {
-				//	
-				//},
-				
-				//rowTemplate: function() { return $templateCache.get('../src/app/ui/data/row.html'); },
-				
 				enableGridMenu: true,
 				exporterMenuCsv: true
 			};
@@ -256,7 +248,43 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 							parent: angular.element(document.body),
 							targetEvent: $event,
 							templateUrl: '../src/app/ui/data/rowActionsPopout.html',
-							controller: function($scope) {
+							
+							locals: {
+								schema: $scope.schemaContext,
+								table: $scope.table
+							},
+							
+							controller: function($scope, schema) {
+								
+								$scope.available = {
+									delete: false
+								};
+								
+								// Determine if delete is available
+								// (we will 
+								
+								$scope.delete = function() {
+									alert('We would delete teh row');
+									
+									var pkey = null;
+									
+									// todo get the pkey!
+									
+									schema.forEach(function(column) {
+										if (column.isPrimary)
+											pkey = column.name;
+									});
+									
+									var query;
+									
+									if (pkey) {
+										query = 'DELETE FROM `';
+									} else {
+										
+									}
+									
+								};
+								
 								$scope.cancel = function() {
 									$mdDialog.hide();
 								}
@@ -592,35 +620,52 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 						}
 					});
 					
+					var makeRowPrototype = function() {
+						return {
+							columns: angular.copy($scope.schema)
+						};
+					};
+					
+					$scope.schema = schema;
+					$scope.rows = [makeRowPrototype()];
 					$scope.db = database;
 					$scope.table = table;
-					$scope.schema = schema;
 					$scope.cancel = function() {
 						$mdDialog.hide();
 					};
 					
-					var resolveSpec = function() {
+					$scope.removeRow = function(index) {
+						$scope.rows.splice(index, 1);
+					};
+					
+					$scope.addRow = function() {
+						$scope.rows.push(makeRowPrototype());
+					};
+					
+					$scope.addRowToFront = function() {
+						$scope.rows.unshift(makeRowPrototype());
+					};
+					
+					var resolveSpec = function(columns) {
 						
 						var searchSpec = [];
-						$scope.schema.forEach(function(column) {
+						columns.forEach(function(column) {
 							if (!column.checked)
 								return;
 							searchSpec.push({
 								name: column.name,
-								operator: column.operator,
-								value: column.value,
-								logicalType: column.logicalType
+								value: column.value
 							});
 						});
 					
 						return searchSpec;
 					};
 					
-					var generateQuery = function() {
+					var generateRowQuery = function(row, index) {
 						
-						var spec = resolveSpec();
+						var spec = resolveSpec(row.columns);
 						var query;
-						query = "INSERT INTO `"+$scope.table.name+"` ";
+						query = "-- Row "+index+"\nINSERT INTO `"+$scope.table.name+"` ";
 						
 						var columnNames = [];
 						var clauses = [];
@@ -629,19 +674,28 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 							
 							columnNames.push('`'+column.name+'`');
 							
-							var clause = column.name + " = ";
+							var clause = "";
 							
 							if (/^\d+$/g.test( column.value ))
-								clause += " "+column.value;
+								clause += column.value;
 							else
-								clause += " '"+column.value.replace(/'/g, '\\\'')+"'";
+								clause += "'"+column.value.replace(/'/g, '\\\'')+"'";
 							
 							clauses.push(clause);
 						});
 						
 						query += "(\n  "+columnNames.join(",\n  ")+"\n) VALUES (\n  "+clauses.join(",\n  ")+"\n)";
 						return query;
-					}
+					};
+					
+					var generateQuery = function() {
+						var queries = [];
+						$scope.rows.forEach(function(row, index) {
+							queries.push(generateRowQuery(row, index+1));
+						});
+						
+						return queries.join(";\n\n");
+					};
 					
 					$scope.preview = function() {
 						$scope.previewMode = !$scope.previewMode;
@@ -649,9 +703,8 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 					};
 					
 					$scope.insert = function() {
-						alert('Not implemented yet');
-						//var query = generateQuery();
-						//runQuery(query);
+						var query = generateQuery();
+						runQuery(query);
 					};
 				}
 			});
