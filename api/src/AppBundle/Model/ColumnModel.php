@@ -20,6 +20,34 @@ class ColumnModel {
 	private $autoIncrement;
 	private $default;
 	private $nullable;
+	private $isPrimary;
+	private $isIndexed;
+	private $key;
+	
+	function getIsPrimary() {
+		return $this->isPrimary;
+	}
+
+	function getIsIndexed() {
+		return $this->isIndexed;
+	}
+
+	function setIsPrimary($isPrimary) {
+		$this->isPrimary = $isPrimary;
+	}
+
+	function setIsIndexed($isIndexed) {
+		$this->isIndexed = $isIndexed;
+	}
+
+		
+	function getKey() {
+		return $this->key;
+	}
+
+	function setKey($key) {
+		$this->key = $key;
+	}
 	
 	function getEncoding() {
 		return $this->encoding;

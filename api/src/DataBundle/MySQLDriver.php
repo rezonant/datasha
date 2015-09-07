@@ -142,6 +142,8 @@ class MySQLDriver extends DatabaseDriver {
 				'default' => $row['Default'],
 				'encoding' => $row['Collation'],
 				'comment' => $row['Comment'],
+				'isPrimary' => $row['Key'] == 'PRI',
+				'isIndexed' => $row['Key'] ? true : false,
 				'auto' => strpos($row['Extra'], 'auto_increment')
 			);
 			

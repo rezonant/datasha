@@ -121,6 +121,8 @@ class ConnectionController extends BaseController {
 		$columnModel->setAutoIncrement($column->auto);
 		$columnModel->setDefault($column->default);
 		$columnModel->setNullable($column->nullable);
+		$columnModel->setIsPrimary($column->isPrimary);
+		$columnModel->setIsIndexed($column->isIndexed);
 
 		return $columnModel;
 	}
