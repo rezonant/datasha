@@ -6,6 +6,13 @@
     "autoload": {
         "psr-4": { "": "src/", "SymfonyStandard\\": "app/SymfonyStandard/" }
     },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/rezonant/PHP-SQL-Parser"
+        }
+    ],
     "require": {
         "php": ">=5.3.9",
         "symfony/symfony": "2.7.*",
@@ -20,7 +27,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/rest-bundle": "~1.7",
         "jms/serializer-bundle": "~1.0",
-        "phpseclib/phpseclib": "~2.0"
+        "phpseclib/phpseclib": "~2.0",
+        "greenlion/php-sql-parser": "^4.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
