@@ -163,6 +163,17 @@ module.factory('api', function($rootScope, $http) {
 			}
 		},
 
+		orderQuery: function(cnx, db, query, column, dir) {
+			return $http.post(endpoint+'/connections/'+cnx.id+'/dbs/'+db.name+'/query/order', {
+				query: query,
+				column: column,
+				direction: dir,
+				key: cnx.key
+			}).then(function(results) {
+				return results.data;
+			});
+		},
+
 		executePagedQuery: function(cnx, db, queryText, limit, offset) {
 			var url = endpoint
 				+'/connections/'+cnx.id

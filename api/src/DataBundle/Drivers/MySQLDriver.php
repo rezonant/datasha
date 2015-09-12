@@ -345,7 +345,8 @@ class MySQLDriver extends DatabaseDriver {
 				$logicalToVirtual[$column] = $virtualColumn;
 				$virtualToLogical[$virtualColumn] = (object)array(
 					'column' => $column,
-					'alias' => $details->alias
+					'alias' => $details->alias,
+					'short' => $details->short
 				);
 			}
 			
@@ -406,7 +407,7 @@ class MySQLDriver extends DatabaseDriver {
 			
 			$columns[] = (object)array(
 				'qualified' => $table.'.'.$field->orgname,
-				'short' => $field->table.'.'.$field->orgname,
+				'short' => $field->table? $field->table.'.'.$field->orgname : $field->orgname,
 				'alias' => $field->name
 			);
 		}

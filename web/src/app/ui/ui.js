@@ -181,7 +181,7 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 			schemaContext: '=',
 			message: '='
 		},
-		controller: function($scope, api) {
+		controller: function($scope, api, uiGridConstants) {
 			$scope.page = {
 				current: 1,
 				size: 30,
@@ -189,10 +189,35 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 			};
 			
 			$scope.loading = true;
-			
+
+			var sortIdentifiers = {};
+
+			$scope.sortChanged = function(grid, sortColumns) {
+				var identifier = sortColumns[0].name;
+				
+				if (sortIdentifiers[identifier]) {
+					identifier = sortIdentifiers[identifier];
+				}
+				api.orderQuery(
+					$scope.query.connection, 
+					$scope.query.db, 
+					$scope.query.text, 
+					identifier, 
+					sortColumns[0].sort.direction == uiGridConstants.ASC ? 'ASC' : 'DESC'
+				).then(function(result) {
+					$scope.query.text = result.query;
+					//$scope.refresh();
+				});
+			};
+					
 			$scope.gridOptions = {
 				enableGridMenu: true,
-				exporterMenuCsv: true
+				exporterMenuCsv: true,
+				useExternalSorting: true,
+				onRegisterApi: function(gridApi) {
+					$scope.gridApi = gridApi;
+					$scope.gridApi.core.on.sortChanged($scope, $scope.sortChanged);
+				}
 			};
 			
 			$scope.refresh = function() {
@@ -240,18 +265,23 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 						enableHiding: true,
 						width: 40,
 						enableColumnMenu: false,
-						cellTemplate: '../src/app/ui/data/rowActions.html'
+						cellTemplate: '../src/app/ui/data/rowActions.html',
 					});
+					
+					sortIdentifiers = {};
 					
 					for (var key in $scope.query.columns) {
 						var details = $scope.query.columns[key];
 						var def = {
 							displayName: details.alias? details.alias : key,
+							identifier: details.short,
 							field: key,
 							width: 210,
 							cellClass: ''
 						};
 					
+						sortIdentifiers[key] = details.short;
+						
 						var column = null;
 						
 						if ($scope.schemaContext) {

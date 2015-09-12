@@ -101,6 +101,45 @@ class QueryController extends BaseController {
 	}
 	
 	/**
+	 * @REST\Post("/connections/{connectionID}/dbs/{db}/query/order")
+	 */
+	public function orderQuery($connectionID, $db, Request $request) {
+		$rq = json_decode($request->getContent());
+		$query = $rq->query;
+		$key = $rq->key;
+		$column = $rq->column;
+		$direction = $rq->direction;
+		
+		$cnx = $this->connections->getConnection($connectionID);
+		if (!$cnx) 
+			return new Response('{"message":"Not Found"}', 404);
+
+		if (!$cnx->unlock($key))
+			return new Response('{"message":"Invalid access key"}', 400);
+		
+		$parser = new \PHPSQLParser\PHPSQLParser();
+		$creator = new \PHPSQLParser\PHPSQLCreator();
+		$tree = $parser->parse($query);
+		
+		$tree['ORDER'] = array(
+			array(
+				'expr_type' => 'colref',
+				'base_expr' => $column,
+				'no_quotes' => array(
+					'delim' => false,
+					'parts' => array($column)
+				),
+				'sub_tree' => false,
+				'direction' => strtoupper($direction)
+			)
+		);
+		
+		return array(
+			'query' => $creator->create($tree)
+		);
+	}
+	
+	/**
 	 * @REST\Post("/connections/{connectionID}/dbs/{db}/query/analyze")
 	 */
 	public function analyzeQuery($connectionID, $db, Request $request) {
@@ -126,11 +165,36 @@ class QueryController extends BaseController {
 		$parser = new \PHPSQLParser\PHPSQLParser();
 		$result = $parser->parse($query);
 		
-		return new Response(print_r($result, true), 200);
+		if (false) {
+			return new Response(print_r($result, true), 200);
 		
-		ob_start();
-		var_dump($result);
-		$dump = ob_get_clean();
-		return new Response($dump, 200);
+			ob_start();
+			var_dump($result);
+			$dump = ob_get_clean();
+			return new Response($dump, 200);
+		} else {
+			$parser = new \PHPSQLParser\PHPSQLParser();
+			$creator = new \PHPSQLParser\PHPSQLCreator();
+			$tree = $parser->parse($query);
+			$column = 'foo';
+			$direction = 'asc';
+			
+			$tree['ORDER'] = array(
+				array(
+					'expr_type' => 'colref',
+					'base_expr' => $column,
+					'no_quotes' => array(
+						'delim' => false,
+						'parts' => array($column)
+					),
+					'sub_tree' => false,
+					'direction' => strtoupper($direction)
+				)
+			);
+
+			return array(
+				'query' => $creator->create($tree)
+			);	
+		}
 	}
 }
