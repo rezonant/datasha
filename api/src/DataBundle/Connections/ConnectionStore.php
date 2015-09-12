@@ -1,6 +1,6 @@
 <?php
 
-namespace DataBundle;
+namespace DataBundle\Connections;
 
 class ConnectionStore {
 	public function __construct() {

@@ -35,7 +35,7 @@ module.factory('api', function($rootScope, $http) {
 		getTableSchema: function(cnxId, db, table, key) {
 			
 			var self = this;
-			return $http.post(endpoint+'/connections/'+cnxId+'/schema/dbs/'+db+'/tables/'+table, {
+			return $http.post(endpoint+'/connections/'+cnxId+'/schema/dbs/'+db+'/tables/'+table+'/columns', {
 				key: key
 			}).then(function(result) {
 				return result.data;
@@ -82,6 +82,15 @@ module.factory('api', function($rootScope, $http) {
 			return $http.put(endpoint+url, data);
 		},
 		
+		analyzeQuery: function(cnx, dbName, query) {
+			return this.post('/connections/'+cnx.id+'/dbs/'+dbName+'/query/analyze', {
+				query: query,
+				key: cnx.key
+			}).then(function(result) {
+				return result.data;
+			});
+		},
+		
 		createQuery: function(cnx, dbName, queryText, errorFunc) {
 			var api = this;
 			var db = new Database(dbName);
@@ -92,6 +101,22 @@ module.factory('api', function($rootScope, $http) {
 				db: db,
 				api: api,
 				onError: errorFunc,
+				analysis: null,
+				
+				getAnalysis: function() {
+					if (this.analysis)
+						return Promise.resolve(this.analysis);
+					var self = this;
+					return api.analyzeQuery(this.connection, dbName, this.text).then(function(analysis) {
+						self.analysis = analysis;
+						return analysis;
+					});
+				},
+				
+				analyze: function() {
+					this.analysis = null;
+					return this.getAnalysis();
+				},
 				
 				count: function() {
 					if (!/^select /i.test(this.text))
@@ -101,7 +126,8 @@ module.factory('api', function($rootScope, $http) {
 					
 					return api
 						.executeQuery(this.connection, this.db, countQuery)
-						.then(function(items) {
+						.then(function(data) {
+							var items = data.results;
 							if (items.length == 0) {
 								return;
 							}
@@ -117,10 +143,15 @@ module.factory('api', function($rootScope, $http) {
 				fetch: function(page) {
 					var self = this;
 					var query = db.getPagedQuery(this.text, page);
+					var offset = (page.current - 1)*page.size;
+					var limit = page.size;
+					
 					var result = 
-						api.executeQuery(this.connection, this.db, query)
+						api.executePagedQuery(this.connection, this.db, this.text, limit, offset)
 							.then(function(r) {
-								return r;
+								page.total = r.total;
+								self.columns = r.columns;
+								return r.results;
 							})
 							.catch(function(e) {
 								self.onError(e);
@@ -132,6 +163,25 @@ module.factory('api', function($rootScope, $http) {
 			}
 		},
 
+		executePagedQuery: function(cnx, db, queryText, limit, offset) {
+			var url = endpoint
+				+'/connections/'+cnx.id
+				+'/dbs/'+db.name
+				+'/query/paged';
+			
+			return $http.post(url, {
+				query: queryText,
+				key: cnx.key,
+				limit: limit,
+				offset: offset
+			}).then(function(result) {
+				return result.data;
+			}).catch(function(result) {
+				throw result.data;
+			});
+			
+		},
+		
 		executeQuery: function(cnx, db, queryText) {
 			var url = endpoint
 				+'/connections/'+cnx.id

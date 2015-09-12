@@ -1,12 +1,16 @@
 <?php
 
-namespace DataBundle;
+namespace DataBundle\Connections;
 
+use JMS\Serializer\Annotation as JMS;
 use phpseclib\Crypt\RSA;
 
 
 /**
+ * Represents a connection
+ * 
  * @author liam
+ * @JMS\ExclusionPolicy("all")
  */
 class Connection {
 	
@@ -20,15 +24,52 @@ class Connection {
 		$this->generateID();
 	}
 	
+	/**
+	 * The GUID identifier for this connection.
+	 * 
+	 * @var string
+	 * @JMS\Expose
+	 */
 	private $id;
+	
+	/**
+	 * @var string
+	 * @JMS\Expose
+	 */
 	private $type;
+	
+	/**
+	 * @var string
+	 * @JMS\Expose
+	 */
 	private $host;
+	
+	/**
+	 * @var int
+	 * @JMS\Expose
+	 */
 	private $port;
+	
+	/**
+	 * @var string
+	 * @JMS\Expose
+	 */
 	private $username;
+	
+	/**
+	 * @var string
+	 */
 	private $password;
+	
+	/**
+	 * @var string
+	 */
 	private $publicKey;
+	
+	/**
+	 * @var string
+	 */
 	private $decryptedPassword = NULL;
-	private $controlText;
 
 	private function generateID()
 	{

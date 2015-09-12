@@ -1,13 +1,13 @@
 <?php
 
-namespace AppBundle\Model;
+namespace DataBundle\Schema;
 
 /**
  * Description of TableModel
  *
  * @author liam
  */
-class ColumnModel {
+class Column {
 	public function __construct($name, $type) {
 		$this->name = $name;
 		$this->type = $type;

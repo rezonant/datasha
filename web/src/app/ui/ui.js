@@ -181,7 +181,7 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 			schemaContext: '=',
 			message: '='
 		},
-		controller: function($scope) {
+		controller: function($scope, api) {
 			$scope.page = {
 				current: 1,
 				size: 30,
@@ -209,13 +209,14 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 				
 				$scope.loading = true;
 				
-				$scope.query.count().then(function(count) {
-					$scope.page.total = count;
+				$scope.query.analyze().then(function(analysis) {
+					$scope.analysis = analysis;
 				});
-				
 				
 				$scope.$root.globalSpinner = true;
 				$scope.query.fetch($scope.page).then(function(items) {
+					
+					var columns = $scope.query.columns;
 					
 					if (items.executed) {
 						$scope.execution = items;
@@ -242,60 +243,10 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 						cellTemplate: '../src/app/ui/data/rowActions.html'
 					});
 					
-					$scope.rowMoreClicked = function(row, $event) {
-						
-						$mdDialog.show({
-							parent: angular.element(document.body),
-							targetEvent: $event,
-							templateUrl: '../src/app/ui/data/rowActionsPopout.html',
-							
-							locals: {
-								schema: $scope.schemaContext,
-								table: $scope.table
-							},
-							
-							controller: function($scope, schema) {
-								
-								$scope.available = {
-									delete: false
-								};
-								
-								// Determine if delete is available
-								// (we will 
-								
-								$scope.delete = function() {
-									alert('We would delete teh row');
-									
-									var pkey = null;
-									
-									// todo get the pkey!
-									
-									schema.forEach(function(column) {
-										if (column.isPrimary)
-											pkey = column.name;
-									});
-									
-									var query;
-									
-									if (pkey) {
-										query = 'DELETE FROM `';
-									} else {
-										
-									}
-									
-								};
-								
-								$scope.cancel = function() {
-									$mdDialog.hide();
-								}
-							}
-						});
-					}
-					
-					
-					for (var key in firstItem) {
+					for (var key in $scope.query.columns) {
+						var details = $scope.query.columns[key];
 						var def = {
-							displayName: key,
+							displayName: details.alias? details.alias : key,
 							field: key,
 							width: 210,
 							cellClass: ''
@@ -354,6 +305,95 @@ module.directive('dbQueryResults', function($templateCache, $mdDialog) {
 					$scope.gridOptions.data = items;
 					$scope.loading = false;
 					$scope.$root.globalSpinner = false;
+					
+					
+					$scope.rowMoreClicked = function(row, $event) {
+						
+						$mdDialog.show({
+							parent: angular.element(document.body),
+							targetEvent: $event,
+							templateUrl: '../src/app/ui/data/rowActionsPopout.html',
+							
+							locals: {
+								schema: $scope.schemaContext,
+								query: $scope.query
+							},
+							
+							controller: function($scope, schema, api, query) {
+								
+								$scope.query = query;
+								$scope.available = {
+									delete: false
+								};
+								
+								// Analyze the query to determine available operations
+								
+								$scope.query.getAnalysis().then(function(analysis) {
+									
+									// What's the primary table?
+									
+									var primaryTable = analysis.from[0].table;
+									
+									// Do we have all primary keys?
+									
+									var hasAllPrimaryKeys = true;
+									analysis.from.forEach(function(source) {
+										var selectedPrimary = false;
+										var primaryKey = null;
+										
+										source.columns.forEach(function(column) {
+											if (!column.isPrimary)
+												return;
+											
+											primaryKey = column.name;
+										});
+										
+										var hasSourcePrimary = false;
+										analysis.selection.forEach(function(selected) {
+											if (selected.column != source.name+'.'+primaryKey &&
+												selected.column != source.name+'.*')
+												return;
+											
+											hasSourcePrimary = true;
+										});
+										
+										if (!hasSourcePrimary)
+											hasAllPrimaryKeys = false;
+									});
+									
+									// Determine if delete is available
+									$scope.available.delete = hasAllPrimaryKeys;
+								});
+								
+								$scope.delete = function() {
+									alert('We would delete teh row');
+									
+									var pkey = null;
+									
+									// todo get the pkey!
+									
+									schema.forEach(function(column) {
+										if (column.isPrimary)
+											pkey = column.name;
+									});
+									
+									var query;
+									
+									if (pkey) {
+										query = 'DELETE FROM `';
+									} else {
+										
+									}
+									
+								};
+								
+								$scope.cancel = function() {
+									$mdDialog.hide();
+								}
+							}
+						});
+					};
+					
 				}).catch(function() {
 					$scope.loading = false;	
 					$scope.$root.globalSpinner = false;
@@ -545,30 +585,67 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 	
 	api.ready.then(function() {
 
-		var cnxId = $routeParams.cnx;
-		var dbName = $routeParams.db;
-		var tableName = $routeParams.table;
-
-		var cnx = domain.getConnection(cnxId);
-
+		var cnx = domain.getConnection($routeParams.cnx);
 		if (!cnx) {
-			alert('Connection '+cnxId+' is not active');
+			alert('Connection '+$routeParams.cnx+' is not active');
 			$location.path('/');
 			return;
 		}
+		
+		// Pull the components
+		var dbName = $routeParams.db;
+		var tableName = $routeParams.table;
 
-		$scope.$root.sidebarHints = {
-			connectionId: cnxId,
-			database: dbName
-		};
+		// Set up UI hints for this page
 		
 		$scope.$root.breadcrumbs = [
 			{url: '#/connections/'+cnx.id, text: cnx.label},
 			{url: '#/connections/'+cnx.id+'/dbs/'+dbName, text: dbName}
 		];
+		$scope.$root.sidebarHints = {
+			connectionId: cnx.id,
+			database: dbName
+		};
+		
 		$scope.connection = cnx;
 		$scope.$root.pageTitle = tableName;
 			
+		api.getTableSchema(cnx.id, dbName, tableName, cnx.key).then(function(columns) {
+			$scope.table = {
+				name: tableName,
+				columns: columns
+			};
+			
+			$scope.schema = columns;
+			
+			$scope.query = api.createQuery(cnx, dbName, 'SELECT * FROM '+tableName, function(e) {
+				var message = 'An unknown error has occurred.';
+				
+				if (e.message)
+					message = e.message;
+				
+				// Error
+				var alert = $mdDialog.alert()
+					.title('Error while fetching results!')
+					.content(message)
+					.ok('Close');
+
+				$mdDialog.show(alert)
+					.finally(function() {
+						alert = undefined;
+					});
+				
+
+				$scope.message = message;
+				$scope.$root.globalSpinner = false;
+				//$scope.$digest();
+			});
+			
+		}).catch(function(err) {
+			alert('Error getting table '+tableName+' from db '+dbName+' on connection '+cnx.id);
+			$location.path('/');
+		});
+
 		$scope.showSchema = function($event) {
 			$mdDialog.show({
 				parent: angular.element(document.body),
@@ -801,43 +878,6 @@ module.controller('TableDetailsController', function ($scope, $routeParams, $loc
 				}
 			});
 		};
-		
-		api.getTableSchema(cnx.id, dbName, tableName, cnx.key).then(function(columns) {
-			$scope.table = {
-				name: tableName,
-				columns: columns
-			};
-			
-			$scope.schema = columns;
-			
-			$scope.query = api.createQuery(cnx, dbName, 'SELECT * FROM '+tableName, function(e) {
-				var message = 'An unknown error has occurred.';
-				
-				if (e.message)
-					message = e.message;
-				
-				// Error
-				var alert = $mdDialog.alert()
-					.title('Error while fetching results!')
-					.content(message)
-					.ok('Close');
-
-				$mdDialog.show(alert)
-					.finally(function() {
-						alert = undefined;
-					});
-				
-
-				$scope.message = message;
-				$scope.$root.globalSpinner = false;
-				$scope.$digest();
-			});
-			
-		}).catch(function(err) {
-			alert('Error getting table '+tableName+' from db '+dbName+' on connection '+cnxId);
-			$location.path('/');
-		});
-
 	});
 });
 

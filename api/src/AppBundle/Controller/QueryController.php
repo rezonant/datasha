@@ -1,14 +1,10 @@
 <?php
 
 namespace AppBundle\Controller;
+
 use FOS\RestBundle\Controller\Annotations as REST;
-use JMS\Serializer\Annotation as JMS;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Model\ConnectionModel;
-use AppBundle\Model\DatabaseModel;
-use AppBundle\Model\TableModel;
-use AppBundle\Model\ColumnModel;
 
 /**
  * @author liam
@@ -16,13 +12,25 @@ use AppBundle\Model\ColumnModel;
 class QueryController extends BaseController {
 	
 	public function initializeServices() {
-		$this->connections = $this->get('app.connections');
+		$this->connections = $this->get('app.data.connections');
+		$this->schema = $this->get('app.data.schema');
+		$this->queries = $this->get('app.data.queries');
 	}
 	
 	/**
 	 * @var \DataBundle\ConnectionService
 	 */
 	private $connections;
+	
+	/**
+	 * @var \DataBundle\SchemaService
+	 */
+	private $schema;
+	
+	/**
+	 * @var \DataBundle\Queries\QueryService
+	 */
+	private $queries;
 	
 	/**
 	 * @REST\Post("/connections/{cnxId}/dbs/{dbName}/query")
@@ -45,7 +53,7 @@ class QueryController extends BaseController {
 			return new Response('{"message":"Invalid access key"}', 400);
 		
 		try {
-			$results = $this->connections->query($cnx, $dbName, $query);
+			$results = $this->queries->query($cnx, $dbName, $query);
 		} catch (\Exception $e) {
 			return new Response(json_encode(array(
 				'message' => $e->getMessage()
@@ -58,9 +66,71 @@ class QueryController extends BaseController {
 	}
 	
 	/**
-	 * @REST\Delete("/connections/{id}")
+	 * @REST\Post("/connections/{cnxId}/dbs/{dbName}/query/paged")
 	 */
-	public function deleteConnection($id) {
-		return new Response('{"message":"Success"}', 200);
+	public function performPagedQuery($cnxId, $dbName, Request $request) {
+		$details = json_decode($request->getContent());
+		
+		if (!isset($details->query) || !isset($details->key)) {
+			return new Response('{"message":"Invalid request"}', 400);
+		}
+		
+		$query = $details->query;
+		$key = $details->key;
+		$limit = $details->limit;
+		$offset = $details->offset;
+		
+		$cnx = $this->connections->getConnection($cnxId);
+		if (!$cnx)
+			return new Response('{"message":"No such connection"}', 404);
+		
+		if (!$cnx->unlock($key))
+			return new Response('{"message":"Invalid access key"}', 400);
+		
+		try {
+			$results = $this->queries->pagedQuery($cnx, $dbName, $query, $limit, $offset);
+		} catch (\Exception $e) {
+			return new Response(json_encode(array(
+				'message' => $e->getMessage()
+			)), 500);
+		}
+		
+		return new Response(json_encode(
+			$results
+		), 200);
+	}
+	
+	/**
+	 * @REST\Post("/connections/{connectionID}/dbs/{db}/query/analyze")
+	 */
+	public function analyzeQuery($connectionID, $db, Request $request) {
+		$rq = json_decode($request->getContent());
+		$query = $rq->query;
+		$key = $rq->key;
+		
+		$cnx = $this->connections->getConnection($connectionID);
+		if (!$cnx) 
+			return new Response('{"message":"Not Found"}', 404);
+
+		if (!$cnx->unlock($key))
+			return new Response('{"message":"Invalid access key"}', 400);
+		
+		return $this->queries->analyzeQuery($cnx, $db, $query);
+	}
+	
+	/**
+	 * @REST\Get("/query/analyze")
+	 */
+	public function analyzeQueryTest(Request $request) {
+		$query = $request->query->get('query');
+		$parser = new \PHPSQLParser\PHPSQLParser();
+		$result = $parser->parse($query);
+		
+		return new Response(print_r($result, true), 200);
+		
+		ob_start();
+		var_dump($result);
+		$dump = ob_get_clean();
+		return new Response($dump, 200);
 	}
 }

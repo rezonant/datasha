@@ -1,0 +1,18 @@
+
+services:
+    
+    app.data.drivers:
+        class: DataBundle\Drivers\DriverStore
+        arguments: []
+
+    app.data.connections:
+        class: DataBundle\Connections\ConnectionService
+        arguments: ["@session", "@app.data.drivers"]
+        
+    app.data.schema:
+        class: DataBundle\Schema\SchemaService
+        arguments: ["@app.data.drivers", "@app.data.connections"]
+        
+    app.data.queries:
+        class: DataBundle\Queries\QueryService
+        arguments: ["@app.data.drivers", "@app.data.connections", "@app.data.schema"]

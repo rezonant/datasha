@@ -1,19 +1,15 @@
 <?php
 
-namespace AppBundle\Model;
+namespace DataBundle\Schema;
 
 /**
- * Description of TableModel
- *
  * @author liam
  */
-class TableModel {
+class TableDetails extends TableSchema {
 	public function __construct($name) {
-		$this->name = $name;
+		$this->setName($name);
 	}
 	
-	private $name;
-	private $columns = array();
 	private $rows;
 	private $size;
 	private $indexSize;
@@ -139,26 +135,5 @@ class TableModel {
 
 	function setComment($comment) {
 		$this->comment = $comment;
-	}
-
-		
-	function getName() {
-		return $this->name;
-	}
-
-	function getColumns() {
-		return $this->columns;
-	}
-
-	function addColumn($column) {
-		$this->columns[] = $column;
-	}
-	
-	function setName($name) {
-		$this->name = $name;
-	}
-
-	function setColumns($columns) {
-		$this->columns = $columns;
 	}
 }

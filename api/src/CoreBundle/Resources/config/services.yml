@@ -1,0 +1,4 @@
+
+services:
+    jms_serializer.naming_strategy:
+        class: 'AppBundle\IdenticalUnlessSpecifiedPropertyNamingStrategy'

@@ -1,25 +1,28 @@
 <?php
 
-namespace DataBundle;
+namespace DataBundle\Connections;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use AppBundle\Model\ConnectionModel;
-use AppBundle\Model\DatabaseModel;
-use AppBundle\Model\TableModel;
-use AppBundle\Model\ColumnModel;
-
 /**
+ * Handles dealing with Connections.
+ * 
  * @author liam
  */
 class ConnectionService {
-	public function __construct(Session $session) {
+	public function __construct(Session $session, $drivers) {
 		$this->session = $session;
+		$this->drivers = $drivers;
 	}
 	
 	/**
 	 * @var Session
 	 */
 	private $session;
+	
+	/**
+	 * @var DriverStore
+	 */
+	private $drivers;
 	
 	/**
 	 * Represents the name of the session variable which will hold
@@ -41,36 +44,6 @@ class ConnectionService {
 		return $store;
 	}
 	
-	public function prepareModel(Connection $connection, $key) {
-	
-		$model = new ConnectionModel($connection->getId(), "{$connection->getUsername()}@{$connection->getHostName()}");
-		$model->setKey($key);
-		
-		$driver = $this->getDriver($connection->getType());
-		
-		foreach ($driver->getDatabases($connection) as $dbName) {
-			$dbModel = new \AppBundle\Model\DatabaseModel($dbName);
-			
-			foreach ($driver->getTables($connection, $dbName) as $tableName) {
-				$tableModel = new \AppBundle\Model\TableModel($tableName);
-				
-				foreach ($driver->getSchema($connection, $dbName, $tableName) as $column) {
-					$columnModel = new \AppBundle\Model\ColumnModel($column->name, $column->type);
-					
-					$tableModel->addColumn($columnModel);
-				}
-				
-				$dbModel->addTable($tableModel);
-			}
-			
-			$model->addDatabase($dbModel);
-		}
-		
-		// Retrieve list of databases
-		
-		return $model;	
-	}
-	
 	/**
 	 * @param Connection $connection
 	 * @param string $username
@@ -81,6 +54,12 @@ class ConnectionService {
 		return $this->getStore()->get($id);
 	}
 	
+	/**
+	 * Delete the given connection by ID from the underlying 
+	 * ConnectionStore.
+	 * 
+	 * @param string $id
+	 */
 	public function deleteConnection($id)
 	{
 		$conn = $this->getConnection($id);
@@ -92,33 +71,6 @@ class ConnectionService {
 	}
 	
 	/**
-	 * Retrieve a driver object for the given type
-	 * 
-	 * @param type $type
-	 * @return \DataBundle\MySQLDriver
-	 * @throws \Exception
-	 */
-	public function getDriver($type)
-	{
-		switch ($type) {
-		case 'mysql':
-			return new MySQLDriver();
-		default:
-			throw new \Exception('No driver available for type '.$type);
-		}
-	}
-	
-	/**
-	 * @param Connection $connection
-	 * @param type $query
-	 */
-	public function query($connection, $db, $query)
-	{
-		$driver = $this->getDriver($connection->getType());
-		return $driver->query($connection, $db, $query);
-	}
-	
-	/**
 	 * Establish a new database connection
 	 * 
 	 * @param string $type
@@ -127,13 +79,14 @@ class ConnectionService {
 	 * @param string $username
 	 * @param string $password
 	 * @param string $key
+	 * 
 	 * @return Connection
 	 */
 	public function establishConnection($type, $hostname, $port, $username, $password, &$key)
 	{
 		$key = NULL;
 		$connection = Connection::create($type, $hostname, $port, $username, $password, $key);
-		$driver = $this->getDriver($type);
+		$driver = $this->drivers->getDriver($type);
 		
 		// Test the connection
 		if (!$driver->testConnection($connection))

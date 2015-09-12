@@ -1,13 +1,13 @@
 <?php
 
-namespace AppBundle\Model;
+namespace DataBundle\Schema;
 
 /**
- * Description of DatabaseModel
+ * Description of Database
  *
  * @author liam
  */
-class DatabaseModel {
+class Database {
 	public function __construct($name) {
 		$this->name = $name;
 	}
