@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 			},
 			app: {
 				src: [
-					'src/entry.js'
+					'src/datasha.js'
 				],
 				dest: 'build/js/app.js'
 			}
@@ -95,6 +95,13 @@ module.exports = function(grunt) {
 					'app.html'
 				],
 				tasks: ['copy', 'chmod', 'string-replace']
+			},
+
+			img: {
+				files: [
+					'img/**'
+				],
+				tasks: ['copy']
 			}
 		},
 		copy: {
@@ -105,11 +112,13 @@ module.exports = function(grunt) {
 						dest: 'build/index.html', 
 						mode: '644'
 					},
-					{ 
-						src: 'img/**/*',
+					{
+						expand: true, 
+						src: 'img/**',
 						dest: 'build/',
 						mode: '644'
 					},
+					//{src: 'img/logo.png', mode: '644', dest: 'build/img/logo.png' },
 					{src: 'build/components/angular-ui-grid/ui-grid.svg',
 						dest: 'build/css/ui-grid.svg', mode: '644'},
 					{src: 'build/components/angular-ui-grid/ui-grid.woff',

@@ -30,7 +30,9 @@ class MySQLDriver extends DatabaseDriver {
 		$result = (object)array(
 			'valid' => true,
 			'selection' => array(),
-			'from' => array()
+			'hasSelection' => false,
+			'from' => array(),
+			'hasFrom' => false
 		);
 		
 		if (!isset($tree['SELECT']) || !$tree['SELECT'])
@@ -38,40 +40,46 @@ class MySQLDriver extends DatabaseDriver {
 				'valid' => true
 			);
 		
-		// Handle selects with love and care
 		
-		foreach ($tree['FROM'] as $table) {
-			$result->from[] = (object)array(
-				'name' => $table['table']
-			);
+		// Handle selects with love and care
+		if (isset($tree['FROM'])) {
+			$result->hasFrom = true;
+			foreach ($tree['FROM'] as $table) {
+				$result->from[] = (object)array(
+					'name' => $table['table']
+				);
+			}
 		}
 		
-		foreach ($tree['SELECT'] as $item) {
-			$item = (object)$item;
-			$realColumn = $item->base_expr;
-			$alias = $item->base_expr;
-			if (isset($item->alias) && $item->alias) {
-				$alias = $item->alias['name'];
-			}
-			
-			$alias = str_replace('`', '', $alias);
-			$realColumn = str_replace('`', '', $realColumn);
-			
-			if (strpos($realColumn, '.') === false) {
-				// Append the table name into the column if there
-				// is only one table. Otherwise determining table
-				// would require schema information
-				
-				if (count($tree['FROM']) == 1) {
-					$table = $tree['FROM'][0];
-					$realColumn = str_replace('`', '', $table['table'].'.'.$realColumn);
+		if (isset($tree['SELECT'])) {
+			$result->hasSelection = true;
+			foreach ($tree['SELECT'] as $item) {
+				$item = (object)$item;
+				$realColumn = $item->base_expr;
+				$alias = $item->base_expr;
+				if (isset($item->alias) && $item->alias) {
+					$alias = $item->alias['name'];
 				}
+
+				$alias = str_replace('`', '', $alias);
+				$realColumn = str_replace('`', '', $realColumn);
+
+				if (strpos($realColumn, '.') === false) {
+					// Append the table name into the column if there
+					// is only one table. Otherwise determining table
+					// would require schema information
+
+					if (count($tree['FROM']) == 1) {
+						$table = $tree['FROM'][0];
+						$realColumn = str_replace('`', '', $table['table'].'.'.$realColumn);
+					}
+				}
+
+				$result->selection[] = (object)array(
+					'column' => $realColumn,
+					'alias' => $alias
+				);
 			}
-			
-			$result->selection[] = (object)array(
-				'column' => $realColumn,
-				'alias' => $alias
-			);
 		}
 		
 		return $result;
@@ -340,13 +348,37 @@ class MySQLDriver extends DatabaseDriver {
 						++$i;
 				}
 
+				$isPrimary = false;
+				
+				if ($details->qualified && $details->qualified[0] != '.') {
+					$parts = explode('.', $details->qualified);
+					$schema = $this->getSchema($connection, $db, $parts[0]);
+					$foundColumn = null;
+					
+					foreach ($schema as $potentialColumn) {
+						if ($potentialColumn->name != $parts[1])
+							continue;
+						
+						// This is the column
+						
+						$foundColumn = $potentialColumn;
+						break;
+					}
+					
+					if ($foundColumn) {
+						$isPrimary = $foundColumn->isPrimary;
+					}
+				}
+				
+				
 				$virtualColumn = str_replace('.', '$', $column).($i? '$'.$i : '');
 				$virtualColumns[] = $virtualColumn;
 				$logicalToVirtual[$column] = $virtualColumn;
 				$virtualToLogical[$virtualColumn] = (object)array(
 					'column' => $column,
 					'alias' => $details->alias,
-					'short' => $details->short
+					'short' => $details->short,
+					'isPrimary' => $isPrimary
 				);
 			}
 			
@@ -499,7 +531,13 @@ class MySQLDriver extends DatabaseDriver {
 		return '`'.str_replace('\'', '', str_replace('`', '', $str)).'`';
 	}
 	
+	private static $schemaCache = array();
+	
 	public function getSchema(Connection $connection, $db, $table) {
+		
+		if (isset($schemaCache["{$connection->getId()}:$db:$table"]))
+			return $schemaCache["{$connection->getId()}:$db:$table"];
+		
 		$rows = $this->rawQuery($connection, $db, 'SHOW FULL COLUMNS FROM '.$this->quoteSchema($table));
 		$columns = array();
 		
@@ -521,7 +559,7 @@ class MySQLDriver extends DatabaseDriver {
 			$columns[] = $description;
 		}
 		
-		return $columns;
+		return $schemaCache["{$connection->getId()}:$db:$table"] = $columns;
 	}
 	
 	public function getDatabases(Connection $connection) {

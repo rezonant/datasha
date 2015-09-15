@@ -3,8 +3,11 @@
 <md-toolbar flex style="margin:-8px;position:absolute;top:0;left:0;right:0;width:auto;">
 	<div class="md-toolbar-tools">
 		
-		<md-button ng-click="showInsert()" class="md-icon-button" aria-label="Insert">
+		<md-button ng-click="showInsert($event)" class="md-icon-button" aria-label="Insert">
 			<md-icon md-font-library="material-icons">add</md-icon>
+		</md-button>
+		<md-button ng-click="quickQuery($event)" class="md-icon-button" aria-label="Quick Query">
+			<md-icon md-font-library="material-icons">find_in_page</md-icon>
 		</md-button>
 		
 		<span flex></span>
@@ -63,4 +66,7 @@
 	paging="paging"
 	message="message"
 	schema-context="schema"
+	connection="connection"
+	database="database"
+	
 	style="position:absolute;top:6em;left:0;right:0;bottom:0.5em;height:auto;"></db-query-results>

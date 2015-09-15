@@ -1,15 +1,15 @@
 
-var module = angular.module('app.api', []);
+var ngm = angular.module(module.exports = 'datasha.api', []);
 var Database = require('./types/Database.js');
 
-module.factory('api', function($rootScope, $http) {
+ngm.factory('api', function($rootScope, $http) {
 	var endpoint = "../../api/dev.php"; // appConfig.apiEndpoint;
 	var resolveReady, rejectReady;
 	
 	return {
 		ready: new Promise(function(resolve, reject) {
 			resolveReady = resolve;
-			rejectReady = reject;
+			rejectReady = reject; 
 		}),
 		
 		getTables: function(cnxId, db, key) {
@@ -141,6 +141,13 @@ module.factory('api', function($rootScope, $http) {
 				},
 				
 				fetch: function(page) {
+					
+					if (!this.text) {
+						this.columns = [];
+						page.total = 0;
+						return array();
+					}
+					
 					var self = this;
 					var query = db.getPagedQuery(this.text, page);
 					var offset = (page.current - 1)*page.size;

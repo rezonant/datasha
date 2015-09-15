@@ -8,6 +8,30 @@ body {
 
 }
 
+.md-dialog-container {
+	height: 100% !important;
+}
+
+.sidebar-logo {
+	position:relative;
+	overflow: hidden;
+	width: 10em;
+	height: 3em;
+	
+	svg {
+		transform: scale(0.2);
+		position: absolute;
+		top: -80px;
+		left: -290px;
+		right: 0;
+		bottom: 0;
+		
+		g {
+			fill: white !important;
+		}
+	}
+}
+
 html {
 	overflow-x: hidden;
 }
@@ -1218,5 +1242,11 @@ h2.pagetitle {
 		md-input-container .md-input, md-select {
 			width: 10em;
 		}
+	}
+}
+
+@media (max-height: 300px) {
+	md-dialog-container {
+		justify-items: flex-start;
 	}
 }

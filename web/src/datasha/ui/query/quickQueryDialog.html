@@ -1,0 +1,32 @@
+<md-dialog aria-label="Actions" style="width:60em;height:40em;position:relative;overflow-x: hidden;">
+	<md-dialog-content style="height:100%;">
+
+		<div ng-show="going">
+			
+			<app-spinner></app-spinner>
+			
+		</div>
+		<div ng-show="!going">
+			<db-query-box 
+				query="query"
+				proposed-query="proposedQuery"
+				style="position:absolute;top:0.5em;left:0.5em;right:0.5em;z-index:1;"></db-query-box>
+			<db-query-results 
+				query="query"
+				paging="paging"
+				message="message"
+				schema-context="schema"
+				database="database"
+				style="position:absolute;top:1.5em;left:0;right:0;bottom:3.2em;height:auto;"></db-query-results>
+		</div>
+	</md-dialog-content>
+
+	<div class="md-actions">
+		<div ng-show="going">
+			
+		</div>
+		<div ng-show="!going">
+			<md-button ng-click="cancel()">Close</md-button>
+		</div>
+	</div>
+</md-dialog>

@@ -2,7 +2,10 @@
 	<div ng-show="!editing">
 		<div ng-click="editing = true" 
 			 style="color: #999; font-family: monospace; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
-			 >{{query.text}}</div>
+			 >
+			{{query.text}}
+			<em ng-show="!query.text">Click to query</em>
+		</div>
 	</div>
 	<div ng-show="editing" style="position:relative;">
 		<textarea class="queryBox" ng-model="currentQuery" 

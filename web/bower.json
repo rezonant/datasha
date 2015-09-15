@@ -1,5 +1,5 @@
 {
-  "name": "dataforest",
+  "name": "datasha",
   "version": "0.0.1",
   "authors": [
     "Liam (GH:rezonant) <wilahti@gmail.com>"
@@ -13,6 +13,7 @@
     "tests"
   ],
   "dependencies": {
+    "SpinKit": "spinkit#~1.2.2",
     "angular": "~1.4.5",
     "angular-animate": "~1.4.4",
     "angular-bootstrap": "~0.13.3",

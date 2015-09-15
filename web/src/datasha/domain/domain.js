@@ -1,6 +1,7 @@
-var module = angular.module('app.domain', []);
 
-module.factory('domain', function($rootScope) {
+var ngm = angular.module(module.exports = 'datasha.domain', []);
+
+ngm.factory('domain', function($rootScope) {
 	return {
 		getConnection: function(id) {
 			var cnx = null;

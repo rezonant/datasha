@@ -1,6 +1,6 @@
 <div style="height:100%;">
 	
-	<db-pager paging="page" style="float:right;"></db-pager>
+	<db-pager paging="page" style="float:right;margin-right:1em;"></db-pager>
 
 	<app-spinner 
 		ng-show="loading" 
@@ -11,14 +11,16 @@
 		<br/>
 		<br/>
 		
-		<div ng-show="message">
-			{{message}}
-		</div>
-		<div ng-show="!message && execution">
-			<em>Query executed successfully, {{execution.rowsAffected}} rows affected</em>
-		</div>
-		<div ng-show="!message && !execution">
-			<em>Query returned no results.</em>
+		<div style="margin-top: 4em;">
+			<div ng-show="message">
+				{{message}}
+			</div>
+			<div ng-show="!message && execution">
+				<em>Query executed successfully, {{execution.rowsAffected}} rows affected</em>
+			</div>
+			<div ng-show="!message && !execution">
+				<em>Query returned no results.</em>
+			</div>
 		</div>
 	</div>
 	
