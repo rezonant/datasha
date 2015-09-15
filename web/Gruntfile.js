@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
 	var pkg = grunt.file.readJSON('package.json');
+	var srcModule = './src/datasha';
 	
 	// Project configuration.
 	
@@ -11,7 +12,7 @@ module.exports = function(grunt) {
 					style: 'expanded'
 				},
 				files: {
-					'build/css/app.css': 'css/app.scss'
+					'build/css/app.css': srcModule+'/assets/css/app.scss'
 				}
 			}
 		},
@@ -37,23 +38,25 @@ module.exports = function(grunt) {
 				transform: ['require-globify']
 			},
 			app: {
-				src: [
-					'src/datasha.js'
-				],
+				src: 'src/datasha.js',
 				dest: 'build/js/app.js'
 			}
 		},
+		
+		ngtemplates:  {
+			app: {
+				cwd:	'build',
+				src:	'html/**/*.html',
+				dest:	'build/js/templates.html.js'
+			}
+		},
+		
 		chmod: {
 			options: {
 				mode: 'go-w,a+rX'
 			},
 			all: {
 				src: ['.', '**/*']
-			}
-		},
-		shell: {
-			perms: {
-				command: 'chmod go-w,a+rX build -Rf'
 			}
 		},
 		watch: {
@@ -105,11 +108,27 @@ module.exports = function(grunt) {
 			}
 		},
 		copy: {
+			templates: {
+				files: [
+					{
+						expand: true,
+						cwd: 'src',
+						src: '**/*.html',
+						dest: 'build/html'
+					}
+				]
+			},
+			
 			main: {
 				files: [
 					{  
-						src: 'app.html',
+						src: srcModule+'/ui/shell/shell.html',
 						dest: 'build/index.html', 
+						mode: '644'
+					},
+					{  
+						src: srcModule+'/ui/shell/shell.html',
+						dest: 'build/dev.html', 
 						mode: '644'
 					},
 					{
@@ -135,11 +154,22 @@ module.exports = function(grunt) {
 				},
 				options: {
 					replacements: [{
-							pattern: /::VERSION::/ig,
-							replacement: function (match) {
-								return pkg.version;
-							}
-						}]
+						pattern: /::VERSION::/ig,
+						replacement: function (match) {
+							return pkg.version;
+						}
+					}]
+				}
+			},
+			useMinJS: {
+				files: {
+					'build/index.html': 'build/index.html'
+				},
+				options: {
+					replacements: [{
+						pattern: /"js\/app.js"/ig,
+						replacement: '"js/app.min.js"'
+					}]
 				}
 			}
 		},
@@ -184,7 +214,8 @@ module.exports = function(grunt) {
 			},
 			app: {
 				src: [
-					'build/js/app.js'
+					'build/js/app.js',
+					'build/js/templates.js'
 				],
 				dest: 'build/js/app.min.js'
 			},
@@ -201,8 +232,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-chmod');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-string-replace');
+	grunt.loadNpmTasks('grunt-angular-templates');
 
 	// Default task(s).
-	grunt.registerTask('default', ['browserify', 'sass', 'uglify', 'concat', 'copy', 'shell', 'string-replace']);
+	
+	grunt.registerTask('templates', ['copy:templates', 'ngtemplates']);
+	grunt.registerTask('default', ['browserify', 'sass', 'templates', 'uglify', 'concat', 'copy:main', 'chmod', 'string-replace']);
 
 };

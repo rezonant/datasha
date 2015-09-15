@@ -16,7 +16,7 @@ var ngm = angular.module(module.exports = 'datasha.ui.query', [
 ngm.directive('dbQueryResults', function($templateCache, $mdDialog) {
 	return {
 		restrict: 'E',
-		templateUrl: '../src/datasha/ui/query/dbQueryResults.html',
+		templateUrl: 'html/datasha/ui/query/dbQueryResults.html',
 		scope: {
 			query: '=',
 			api: '=',
@@ -112,7 +112,7 @@ ngm.directive('dbQueryResults', function($templateCache, $mdDialog) {
 						enableHiding: true,
 						width: 40,
 						enableColumnMenu: false,
-						cellTemplate: '../src/datasha/ui/query/datagrid/rowActions/rowActions.html',
+						cellTemplate: 'html/datasha/ui/query/datagrid/rowActions/rowActions.html',
 					});
 					
 					sortIdentifiers = {};
@@ -191,7 +191,7 @@ ngm.directive('dbQueryResults', function($templateCache, $mdDialog) {
 						$mdDialog.show({
 							parent: angular.element(document.body),
 							targetEvent: $event,
-							templateUrl: '../src/datasha/ui/query/datagrid/rowActions/rowActionsPopout.html',
+							templateUrl: 'html/datasha/ui/query/datagrid/rowActions/rowActionsPopout.html',
 							
 							locals: {
 								schema: $scope.schemaContext,
@@ -219,7 +219,7 @@ ngm.directive('dbQueryResults', function($templateCache, $mdDialog) {
 									$mdDialog.show({
 										parent: angular.element(document.body),
 										targetEvent: $event,
-										templateUrl: '../src/datasha/ui/data/editRows.html', 
+										templateUrl: 'html/datasha/ui/data/editRows.html', 
 
 										locals: {
 											table: $scope.table,
@@ -407,7 +407,7 @@ ngm.directive('dbQueryResults', function($templateCache, $mdDialog) {
 										$mdDialog.show({
 											parent: angular.element(document.body),
 											targetEvent: $event,
-											templateUrl: '../src/datasha/ui/query/quickQueryDialog.html',
+											templateUrl: 'html/datasha/ui/query/quickQueryDialog.html',
 
 											locals: {
 												table: $scope.table,
@@ -477,7 +477,7 @@ ngm.directive('dbQueryResults', function($templateCache, $mdDialog) {
 ngm.directive('dbQueryBox', function() {
 	return {
 		restrict: 'E',
-		templateUrl: '../src/datasha/ui/query/dbQueryBox.html',
+		templateUrl: 'html/datasha/ui/query/dbQueryBox.html',
 		scope: {
 			query: '=',
 			currentQuery: '=proposedQuery',

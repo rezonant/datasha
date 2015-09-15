@@ -13,7 +13,7 @@ var ngm = angular.module(module.exports = 'auth.ui.databases', [
 ngm.config(function($routeProvider) {
 	$routeProvider
 		.when('/connections/:cnx/dbs/:db', {
-			templateUrl: '../src/datasha/ui/databases/db.html',
+			templateUrl: 'html/datasha/ui/databases/db.html',
 			controller: 'DatabaseDetailsController'
 		})
 	;
@@ -50,7 +50,7 @@ ngm.controller('DatabaseDetailsController', function ($scope, $routeParams, $loc
 				field: 'name',
 				displayName: 'Name',
 				minWidth: 100,
-				cellTemplate: '../src/datasha/ui/tables/tableListName.html'
+				cellTemplate: 'html/datasha/ui/tables/tableListName.html'
 			},
 			{
 				field: 'rows',

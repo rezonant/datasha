@@ -9,11 +9,11 @@ var ngm = angular.module(module.exports = 'datasha.ui.connections', [
 ngm.config(function($routeProvider) {
 	$routeProvider
 		.when('/connections', {
-			templateUrl: '../src/datasha/ui/connections/connections.html',
+			templateUrl: 'html/datasha/ui/connections/connections.html',
 			controller: 'ConnectionsListController'
 		})
 		.when('/connections/:id', {
-			templateUrl: '../src/datasha/ui/connections/connection.html',
+			templateUrl: 'html/datasha/ui/connections/connection.html',
 			controller: 'ConnectionDetailsController'
 		})
 	;
@@ -48,7 +48,7 @@ ngm.controller('ConnectionDetailsController', function ($scope, $location, $rout
 				field: 'name',
 				displayName: 'Name',
 				minWidth: 100,
-				cellTemplate: '../src/datasha/ui/databases/dbListName.html'
+				cellTemplate: 'html/datasha/ui/databases/dbListName.html'
 			},
 			{
 				field: 'tableCount',

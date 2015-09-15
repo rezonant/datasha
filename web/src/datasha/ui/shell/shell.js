@@ -8,7 +8,7 @@ var ngm = angular.module(module.exports = 'datasha.ui.shell', [
 ngm.config(function($routeProvider) {
 	$routeProvider
 		.when('/', {
-			templateUrl: '../src/app/ui/home.html',
+			templateUrl: 'html/datasha/ui/shell/home.html',
 			controller: 'HomeController'
 		})
 		.otherwise('/')
@@ -137,13 +137,13 @@ ngm.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUti
 		}
 		
 		return passwordDialog
-			.requestPassword(authErrorMessage || 'Please enter your password', {
+			.request(authErrorMessage, {
 				testPassword: function(password) {
 					return checkPassword(password);
 				}
 			})
 			.then(function(password) {
-				window.sessionStorage.dfPassword = $scope.password;
+				window.sessionStorage.dfPassword = password;
 				return ;
 			});
 	});
@@ -159,7 +159,7 @@ ngm.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUti
 			$mdDialog.show({
 				parent: angular.element(document.body),
 				//targetEvent: $event,
-				templateUrl: '../src/app/ui/setup.html',
+				templateUrl: 'html/datasha/ui/setup.html',
 				controller: function($scope) {
 					$scope.go = function() {
 						if ($scope.password1 != $scope.password2) {

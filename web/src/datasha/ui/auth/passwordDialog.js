@@ -10,7 +10,7 @@ ngm.factory('passwordDialog', function($mdDialog) {
 				
 				$mdDialog.show({
 					parent: angular.element(document.body),
-					templateUrl: '../src/app/ui/login.html',
+					templateUrl: 'html/datasha/ui/auth/login.html',
 					controller: function($scope) {
 
 						$scope.errorMessage = authErrorMessage;

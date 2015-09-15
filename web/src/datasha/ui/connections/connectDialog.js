@@ -10,7 +10,7 @@ ngm.factory('connectDialog', function($mdDialog) {
 			$mdDialog.show({
 				parent: angular.element(document.body),
 				targetEvent: $event,
-				templateUrl: '../src/datasha/ui/connections/connectDialog.html',
+				templateUrl: 'html/datasha/ui/connections/connectDialog.html',
 				controller: 'ConnectDialogController'
 			});
 		}

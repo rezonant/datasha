@@ -9,7 +9,7 @@ var ngm = angular.module(module.exports = 'datasha.ui.data', [
 ngm.directive('dbPager', function() {
 	return {
 		restrict: 'E',
-		templateUrl: '../src/datasha/ui/data/pager.html',
+		templateUrl: 'html/datasha/ui/data/pager.html',
 		scope: {
 			paging: '='
 		},

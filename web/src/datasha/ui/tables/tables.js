@@ -9,7 +9,7 @@ var ngm = angular.module(module.exports = 'auth.ui.tables', [
 ngm.config(function($routeProvider) {
 	$routeProvider
 		.when('/connections/:cnx/dbs/:db/tables/:table', {
-			templateUrl: '../src/datasha/ui/tables/table.html',
+			templateUrl: 'html/datasha/ui/tables/table.html',
 			controller: 'TableDetailsController'
 		})
 	;
@@ -89,7 +89,7 @@ ngm.controller('TableDetailsController', function ($scope, $routeParams, $locati
 			$mdDialog.show({
 				parent: angular.element(document.body),
 				targetEvent: $event,
-				templateUrl: '../src/datasha/ui/query/quickQueryDialog.html',
+				templateUrl: 'html/datasha/ui/query/quickQueryDialog.html',
 
 				locals: {
 					table: $scope.table,
@@ -120,7 +120,7 @@ ngm.controller('TableDetailsController', function ($scope, $routeParams, $locati
 			$mdDialog.show({
 				parent: angular.element(document.body),
 				targetEvent: $event,
-				templateUrl: '../src/datasha/ui/tables/tableSchema.html',
+				templateUrl: 'html/datasha/ui/tables/tableSchema.html',
 				locals: {
 					table: $scope.table,
 					schema: $scope.schema,
@@ -141,7 +141,7 @@ ngm.controller('TableDetailsController', function ($scope, $routeParams, $locati
 				$mdDialog.show({
 				parent: angular.element(document.body),
 				targetEvent: $event,
-				templateUrl: '../src/datasha/ui/data/insertRows.html',
+				templateUrl: 'html/datasha/ui/data/insertRows.html',
 				locals: {
 					table: $scope.table,
 					schema: $scope.schema,
@@ -261,7 +261,7 @@ ngm.controller('TableDetailsController', function ($scope, $routeParams, $locati
 			$mdDialog.show({
 				parent: angular.element(document.body),
 				targetEvent: $event,
-				templateUrl: '../src/datasha/ui/tables/tableSearch.html',
+				templateUrl: 'html/datasha/ui/tables/tableSearch.html',
 				locals: {
 					table: $scope.table,
 					schema: $scope.schema,
