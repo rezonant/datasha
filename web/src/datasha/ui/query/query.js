@@ -15,6 +15,64 @@ var ngm = angular.module(module.exports = 'datasha.ui.query', [
 	require('./quickQueryDialog')
 ]);
 
+ngm.config(function($routeProvider) { 
+	$routeProvider.when('/connections/:cnx/dbs/:db/query', {
+		templateUrl: 'html/datasha/ui/query/queryDatabase.html',
+		controller: function($scope, $routeParams, api, domain) {
+			api.ready.then(function() {
+
+				var cnx = domain.getConnection($routeParams.cnx);
+				if (!cnx) {
+					alert('Connection '+$routeParams.cnx+' is not active');
+					$location.path('/');
+					return;
+				}
+
+				// Pull the components
+				var dbName = $routeParams.db;
+
+				// Set up UI hints for this page
+
+				$scope.$root.breadcrumbs = [
+					{url: '#/connections/'+cnx.id, text: cnx.label},
+					{url: '#/connections/'+cnx.id+'/dbs/'+dbName, text: dbName}
+				];
+				$scope.$root.sidebarHints = {
+					connectionId: cnx.id,
+					database: dbName
+				};
+
+				$scope.database = {
+					name: dbName
+				};
+
+				$scope.connection = cnx;
+				$scope.$root.pageTitle = 'Query';
+				
+				$scope.message = 'Enter a query above.';
+				$scope.runQuery = function(queryText) {
+					$scope.query = api.createQuery($scope.connection, $scope.database.name, queryText, function(e) {
+						$timeout(function() {
+							var message = 'An unknown error has occurred.';
+							if (e.message)
+								message = e.message;
+
+							$scope.message = message;
+							$scope.$root.globalSpinner = false;
+						});
+					});
+				}
+
+				$scope.query = {
+					run: function(text) {
+						$scope.runQuery(text);
+					}
+				};
+			});
+		}
+	});
+});
+
 ngm.directive('dbQueryResults', function($templateCache, $mdDialog, rowEditorDialog) {
 	return {
 		restrict: 'E',

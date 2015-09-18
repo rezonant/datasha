@@ -38,7 +38,10 @@ ngm.controller('ConnectionDetailsController', function ($scope, $location, $rout
 	$scope.$root.breadcrumbs = [
 		{url: '#/connections', text: 'Connections'}
 	];
-	
+
+	$scope.$root.sidebarHints = {
+		connectionId: cnx.id
+	};
 	$scope.$root.pageTitle = cnx.label;
 	$scope.gridOptions = {
 	

@@ -203,7 +203,11 @@ ngm.controller('LeftSidebarController', function (
 		$mdSidenav('left').close();
 	};
 	
-	$scope.$root.$watch('sidebarHints', function() {
+	$scope.$root.$watch('sidebarHints', updateFromHints);
+	$scope.$root.$watch('sidebarHints.database', updateFromHints);
+	$scope.$root.$watch('sidebarHints.connectionId', updateFromHints);
+	
+	function updateFromHints() {
 		if (!$scope.$root.sidebarHints)
 			return;
 		
@@ -221,9 +225,8 @@ ngm.controller('LeftSidebarController', function (
 				});
 			}
 			
-		}
-		
-	});
+		}	
+	}
 	
 	$scope.deleteConnection = function(cnx, $event) {
 		var alert = $mdDialog.confirm()
@@ -262,6 +265,19 @@ ngm.controller('LeftSidebarController', function (
 		$mdSidenav('left').close();
 		$location.path('/connections/'+cnx.id+'/dbs/'+db.name);
 	};
+	
+	$scope.goToQuery = function(cnx, db) {
+		$mdSidenav('left').close();
+		$location.path('/connections/'+cnx.id+'/dbs/'+db.name+'/query');
+	}
+	
+	$scope.drop = function(cnx, db) {
+		alert('not implemented yet');
+	}
+	
+	$scope.showAddTable = function(cnx, db) {
+		alert('not implemented yet');
+	}
 	
 	$scope.selectConnection = function(cnx, $event) {
 		

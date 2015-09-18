@@ -249,13 +249,13 @@
 										<md-button class="md-icon-button" ng-click="goToDatabasePage(activeConnection, activeDb)">
 											<md-icon md-font-library="material-icons">info</md-icon>
 										</md-button>
-										<md-button class="md-icon-button">
+										<md-button class="md-icon-button" ng-click="drop(activeConnection, activeDb)">
 											<md-icon md-font-library="material-icons">delete</md-icon>
 										</md-button>
-										<md-button class="md-icon-button">
-											<md-icon md-font-library="material-icons">search</md-icon>
+										<md-button class="md-icon-button" ng-click="goToQuery(activeConnection, activeDb)">
+											<md-icon md-font-library="material-icons">directions</md-icon>
 										</md-button>
-										<md-button class="md-icon-button">
+										<md-button class="md-icon-button" ng-click="showAddTable(activeConnection, activeDb)">
 											<md-icon md-font-library="material-icons">add</md-icon>
 										</md-button>
 									</div>

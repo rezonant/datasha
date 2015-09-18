@@ -37,11 +37,16 @@ ngm.controller('DatabaseDetailsController', function ($scope, $routeParams, $loc
 	];
 	
 	$scope.$root.pageTitle = dbName;
-	
+
 	$scope.connection = cnx;
 	$scope.database = {
 		name: dbName
 	};
+
+	$scope.$root.sidebarHints = {
+		connectionId: cnx.id,
+		database: dbName
+	};	
 	
 	$scope.gridOptions = {
 		enableGridMenu: true,
