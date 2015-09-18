@@ -41,10 +41,10 @@ module.exports = function(grunt) {
 				src: 'src/datasha.js',
 				dest: 'build/js/app.js'
 			}
-		},
+		}, 
 		
 		ngtemplates:  {
-			app: {
+			'datasha.ui': {
 				cwd:	'build',
 				src:	'html/**/*.html',
 				dest:	'build/js/templates.html.js'
@@ -93,11 +93,11 @@ module.exports = function(grunt) {
 			},
 			html: {
 				files: [
-					'html/**/*.html',
+					'src/**/*.html',
 					'brand/**/*.html',
 					'app.html'
 				],
-				tasks: ['copy', 'chmod', 'string-replace']
+				tasks: ['copy', 'chmod', 'templates', 'string-replace']
 			},
 
 			img: {
@@ -157,6 +157,19 @@ module.exports = function(grunt) {
 						pattern: /::VERSION::/ig,
 						replacement: function (match) {
 							return pkg.version;
+						}
+					}]
+				}
+			},
+			devVersion: {
+				files: {
+					'build/dev.html': 'build/dev.html'
+				},
+				options: {
+					replacements: [{
+						pattern: /::VERSION::/ig,
+						replacement: function (match) {
+							return '[DEV] '+pkg.version;
 						}
 					}]
 				}

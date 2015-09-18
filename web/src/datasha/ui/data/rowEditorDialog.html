@@ -16,29 +16,34 @@
 				<md-divider></md-divider>
 				
 				<div style="display:inline-flex; padding-left:32px; width:20em;align-items:flex-start;"
+							ng-if="!previewMode || column.checked"
 							ng-repeat="column in row.columns" 
-							ng-show="!previewMode || column.checked"
 							ng-class="{'preview': previewMode}">
-					<md-checkbox ng-show="!previewMode" ng-model="column.checked"></md-checkbox>
-					<div>
-						<span ng-show="!previewMode">{{column.name}}</span>
-						<strong ng-show="previewMode">`{{column.name}}`</strong>
+					<md-checkbox aria-label="Include {{column.name}}" 
+								 ng-show="!previewMode" 
+								 ng-model="row.selectedColumns[column.field]"></md-checkbox>
+					<div> 
+						<span ng-switch="previewMode.toString()">
+							<strong ng-switch-when="true">`{{column.name}}`</strong>
+							<span ng-switch-default>{{column.name}}</span>
+						</span>
 
 						=
 
 						<span ng-show="previewMode" style="font-family: monospace; color: #AD5503;">
-							 '{{column.value}}'
+							 '{{row.values[column.field]}}'
 						</span>
 
 						<div ng-switch="column.logicalType" class="value-selector" ng-show="!previewMode">
-							<md-select ng-model="column.value" ng-switch-when="bool">
+							<md-select ng-model="row.values[column.field]" ng-switch-when="bool">
 								<md-option ng-value="1">true</md-option>
 								<md-option ng-value="0">false</md-option>
 							</md-select>
 							<md-input-container ng-switch-default>
 								<label>Value</label>
-								<input ng-model="column.value" type="text" style="width: 10em;"
-									   ng-click="column.checked = true" />
+								<input ng-model="row.values[column.field]" type="text" style="width: 10em;"
+									   ng-model-options="{updateOn:'blur'}"
+									   ng-click="row.selectedColumns[column.field] = true" />
 							</md-input-container>
 						</div>
 
@@ -51,10 +56,12 @@
 
 	<div class="md-actions">
 		<md-button ng-click="cancel()">Cancel</md-button>
-		<md-button class="md-raised" ng-click="preview()">
-			<span ng-show="!previewMode">Preview</span>
-			<span ng-show="previewMode">Keep Editing</span>
+		<md-button class="md-raised" ng-click="preview()" ng-show="!previewMode">
+			Preview
 		</md-button>
-		<md-button class="md-raised md-warn" ng-click="insert()">Save</md-button>
+		<md-button class="md-raised" ng-click="previewMode = false" ng-show="previewMode">
+			Keep Editing
+		</md-button>
+		<md-button class="md-raised md-warn" ng-click="edit()">Save</md-button>
 	</div>
 </md-dialog>

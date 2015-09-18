@@ -15,7 +15,7 @@ ngm.config(function($routeProvider) {
 	;
 });
 
-ngm.controller('TableDetailsController', function ($scope, $routeParams, $location, $mdDialog, domain, api) { 
+ngm.controller('TableDetailsController', function ($scope, $routeParams, $location, $mdDialog, quickQueryDialog, domain, api) { 
 	
 	api.ready.then(function() {
 
@@ -86,34 +86,9 @@ ngm.controller('TableDetailsController', function ($scope, $routeParams, $locati
 
 		$scope.quickQuery = function($event) {
 		
-			$mdDialog.show({
-				parent: angular.element(document.body),
-				targetEvent: $event,
-				templateUrl: 'html/datasha/ui/query/quickQueryDialog.html',
-
-				locals: {
-					table: $scope.table,
-					schema: $scope.schema,
-					database: { name: dbName }
-				},
-
-				controller: function($scope, api, database) {
-					$scope.cancel = function() {
-						$mdDialog.hide();
-					}
-					
-					$scope.query = api.createQuery(cnx, database.name, 'SELECT 1', function(e) {
-						var message = 'An unknown error has occurred.';
-						if (e.message)
-							message = e.message;
-
-						$scope.message = message;
-						$scope.$root.globalSpinner = false;
-						//$scope.$digest();
-					});
-					
-				}
-			});
+			quickQueryDialog.show($event, $scope.connection, $scope.database, 
+								  "SELECT 'enjoy' as 'hello', 'your' as 'world', 'stay' as 'please'", 
+								  false);
 		}
 
 		$scope.showSchema = function($event) {

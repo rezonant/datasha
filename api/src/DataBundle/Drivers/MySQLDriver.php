@@ -190,15 +190,22 @@ class MySQLDriver extends DatabaseDriver {
 	 */
 	public function pagedQuery(Connection $connection, $db, $query, $limit, $offset)
 	{
-		
+		// Sometimes a query just does not yield data 
+		if (!$this->queryYieldsData($query))
+			return $this->query($connection, $db, $query);
+
 		// Oh my, some magic bullshit happens here
 		$countQuery = $this->getCountQuery($query);
 		$pagedQuery = $this->getPagedQuery($query, $limit, $offset);
-		
+
 		$counts = $this->rawQuery($connection, $db, $countQuery);
+
+		if (is_object($counts))
+			return $counts;
+
 		$countRow = $counts[0];
 		$count = $countRow->ct;
-		
+
 		$results = $this->query($connection, $db, $pagedQuery);
 		
 		return (object)array(
@@ -206,6 +213,13 @@ class MySQLDriver extends DatabaseDriver {
 			'results' => $results->results,
 			'columns' => $results->columns
 		);
+	}
+	
+	private function queryYieldsData($sql) {
+		$parser = new PHPSQLParser();
+		$tree = $parser->parse($sql);
+		
+		return isset($tree['SELECT']);
 	}
 	
 	private function getCountQuery($sql)

@@ -5,7 +5,7 @@
 			 >
 			{{query.text}}
 			<em ng-show="!query.text">Click to query</em>
-		</div>
+		</div> 
 	</div>
 	<div ng-show="editing" style="position:relative;">
 		<textarea class="queryBox" ng-model="currentQuery" 
@@ -13,9 +13,18 @@
 
 		<div style="position:absolute;bottom:5px;right:20px;">
 			<md-button ng-click="editing = false" class="md-raised">Cancel</md-button>
-			
-			<md-button ng-show="!isQuery" ng-click="editing = false; query.run(currentQuery)" class="md-warn md-raised">Run</md-button>
-			<md-button ng-show="isQuery" ng-click="editing = false; query.run(currentQuery)" class="md-primary md-raised">Query</md-button>
+
+			<md-button ng-show="!isQuery" 
+					   ng-click="editing = false; query.run(currentQuery)" 
+					   class="md-warn md-raised">Run</md-button>
+					   
+			<md-button ng-show="isQuery && currentQuery == query.text" 
+					   ng-click="editing = false; query.run(currentQuery)" 
+					   class="md-primary md-raised">Refresh</md-button>
+					   
+			<md-button ng-show="isQuery && currentQuery != query.text" 
+					   ng-click="editing = false; query.run(currentQuery)" 
+					   class="md-primary md-raised">Query</md-button>
 		</div>
 	</div>
 </div>

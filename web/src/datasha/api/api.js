@@ -156,6 +156,12 @@ ngm.factory('api', function($rootScope, $http) {
 					var result = 
 						api.executePagedQuery(this.connection, this.db, this.text, limit, offset)
 							.then(function(r) {
+								
+								if (r.executed) {
+									self.executionStatus = r;
+									return;
+								}
+								
 								page.total = r.total;
 								self.columns = r.columns;
 								return r.results;
@@ -234,7 +240,9 @@ ngm.factory('api', function($rootScope, $http) {
 			
 				var connection = result.data;
 				return self.initializeConnection(connection);
-			});
+			}).catch(function(err) {
+				throw { message: err.data.message };
+			}); 
 		},
 
 		closeConnection: function(cnx) {

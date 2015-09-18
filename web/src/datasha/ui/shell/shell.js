@@ -137,7 +137,11 @@ ngm.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUti
 		}
 		
 		return passwordDialog
-			.request(authErrorMessage, {
+			.request({
+				title: 'Credentials are locked',
+				message: 'Provide your local password to decrypt database credentials.',
+				errorMessage: authErrorMessage,
+				
 				testPassword: function(password) {
 					return checkPassword(password);
 				}
@@ -191,7 +195,10 @@ ngm.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUti
 	});
 });
 
-ngm.controller('LeftSidebarController', function ($scope, $timeout, $location, $mdSidenav, $mdDialog, api, domain, connectDialog) {
+ngm.controller('LeftSidebarController', function (
+		$scope, $timeout, $location, $mdSidenav, $mdDialog, api, domain, 
+		connectDialog, passwordDialog)
+{
 	$scope.close = function () {
 		$mdSidenav('left').close();
 	};
@@ -270,11 +277,43 @@ ngm.controller('LeftSidebarController', function ($scope, $timeout, $location, $
 			
 			// Re-establish the connection
 
+			return passwordDialog.request({
+				message:   'The selected connection has become inactive. You must provide '
+						 + 'the password to reconnect.',
+				title: 'Reconnect to '+cnx.label,
+				testPassword: function(password) { 
+					$scope.$root.globalSpinner = true;
+					return api.establishConnection(cnx.type, cnx.host, cnx.port, cnx.username, password)
+						.then(function(newConnection) {
+
+							cnx.id = newConnection.id;
+							cnx.key = newConnection.key;
+							cnx.isAlive = true;
+							cnx.isReady = true;
+
+							$scope.$root.persistData();
+							$scope.$root.globalSpinner = false;
+							return true;
+						})
+						.catch(function(error) {
+							$scope.$root.globalSpinner = false;
+					
+							throw {
+								message: 'Could not re-establish connection. Check password and try again.'
+							};
+						})
+					;
+				}
+			}).then(function() {
+				// #sec: do not pass password to promise consumer
+			});
+					
+
 			return new Promise(function(resolve, reject) {
 				$mdDialog.show({
 					parent: angular.element(document.body),
 					targetEvent: $event,
-					templateUrl: '../src/app/ui/passwordDialog.html',
+					templateUrl: 'html/datasha/ui/auth/passwordDialog.html',
 					controller: function($scope) {
 
 						$scope.title = 'Reconnect to '+cnx.label;
@@ -284,35 +323,7 @@ ngm.controller('LeftSidebarController', function ($scope, $timeout, $location, $
 
 						$scope.go = function(password) {
 							
-							$scope.$root.globalSpinner = true;
-							api.establishConnection(cnx.type, cnx.host, cnx.port, cnx.username, password)
-								.then(function(newConnection) {
-
-									cnx.id = newConnection.id;
-									cnx.key = newConnection.key;
-									cnx.isAlive = true;
-									cnx.isReady = true;
-
-									$mdDialog.hide();
-									$scope.$root.persistData();
-									$scope.$root.globalSpinner = false;
-
-									resolve();
-								})
-								.catch(function() {
-									$mdDialog.hide();
-									var alert = $mdDialog.alert()
-										.title('Failed to connect')
-										.content('Could not re-establish connection.')
-										.ok('Close');
-
-									$mdDialog.show(alert)
-										.finally(function() {
-											alert = undefined;
-											reject();
-										});
-									$scope.$root.globalSpinner = false;
-								});
+							
 						};
 
 						$scope.cancel = function() {

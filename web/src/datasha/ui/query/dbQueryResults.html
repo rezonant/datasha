@@ -15,11 +15,16 @@
 			<div ng-show="message">
 				{{message}}
 			</div>
-			<div ng-show="!message && execution">
-				<em>Query executed successfully, {{execution.rowsAffected}} rows affected</em>
+			<div ng-show="!query">
+				<em>Ready to run!</em>
 			</div>
-			<div ng-show="!message && !execution">
-				<em>Query returned no results.</em>
+			<div ng-show="query && !message" ng-switch="execution.toString()">
+				<div ng-switch-when="true">
+					<em>Query executed successfully, {{execution.rowsAffected}} rows affected</em>
+				</div>
+				<div ng-switch-when="false">
+					<em>Query returned no results.</em>
+				</div>
 			</div>
 		</div>
 	</div>

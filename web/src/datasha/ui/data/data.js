@@ -3,7 +3,9 @@ var ngm = angular.module(module.exports = 'datasha.ui.data', [
 	'ngRoute', 
 	'ngMaterial', 
 	require('../../api'),
-	require('../../domain')
+	require('../../domain'),
+	
+	require('./rowEditorDialog')
 ]);
 
 ngm.directive('dbPager', function() {
