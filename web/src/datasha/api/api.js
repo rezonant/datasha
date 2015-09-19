@@ -3,7 +3,7 @@ var ngm = angular.module(module.exports = 'datasha.api', []);
 var Database = require('./types/Database.js');
 
 ngm.factory('api', function($rootScope, $http) {
-	var endpoint = "../../api/dev.php"; // appConfig.apiEndpoint;
+	var endpoint = appConfig.apiEndpoint;
 	var resolveReady, rejectReady;
 	
 	return {
