@@ -228,7 +228,7 @@ module.exports = function(grunt) {
 			app: {
 				src: [
 					'build/js/app.js',
-					'build/js/templates.js'
+					'build/js/templates.html.js'
 				],
 				dest: 'build/js/app.min.js'
 			},
@@ -249,7 +249,19 @@ module.exports = function(grunt) {
 
 	// Default task(s).
 	
-	grunt.registerTask('templates', ['copy:templates', 'ngtemplates']);
-	grunt.registerTask('default', ['browserify', 'sass', 'templates', 'uglify', 'concat', 'copy:main', 'chmod', 'string-replace']);
-
+	grunt.registerTask('templates', [
+		'copy:templates', 
+		'ngtemplates'
+	]);
+	
+	grunt.registerTask('default', [
+		'browserify', 
+		'sass', 
+		'templates', 
+		'uglify', 
+		'concat', 
+		'copy:main', 
+		'chmod', 
+		'string-replace'
+	]);
 };
