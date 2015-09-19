@@ -1,0 +1,4 @@
+
+module.exports = {
+	apiEndpoint: '../../api/dev.php'
+};
