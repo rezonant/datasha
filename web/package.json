@@ -1,7 +1,9 @@
 {
   "name": "datasha",
   "version": "0.0.3",
-  "description": "",
+  "description": "A modern database management tool",
+  "repository": "http://github.com/rezonant/datasha.git",
+  "private": true,
   "main": "src/datasha.js",
   "scripts": {
     "test": "npm test"
