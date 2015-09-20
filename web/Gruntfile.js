@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 			},
 			sass: {
 				files: [
-					'css/**/*.scss'
+					'src/**/*.scss'
 				],
 				tasks: ['sass', 'chmod']
 			},

@@ -1,6 +1,6 @@
 <div>
 	{{paging.count}} items 
-	(<md-select style="display:inline-block;margin:0;" ng-model="paging.current">
+	(<md-select aria-label="Page selection" style="display:inline-block;margin:0;" ng-model="paging.current">
 		<md-option ng-value="page" ng-repeat="page in pages">Page {{ page }}</md-option>
 	</md-select> of {{pages.length}}, {{paging.total}} total rows)
 	

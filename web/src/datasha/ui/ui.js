@@ -9,3 +9,23 @@ var module = angular.module(module.exports = 'datasha.ui', [
 	require('./shell'),
 	require('./filters')
 ]);
+
+module.run(function($timeout, $rootScope) {
+	var promise = null;
+	
+	$rootScope.$watch('globalSpinner', function(nv, ov) {
+		if (nv) {
+			if (promise) {
+				$timeout.cancel(promise);
+				promise = null;
+			}
+			
+			$('#global-progress').show();
+		} else {
+			promise = $timeout(function() {
+				promise = null;
+				$('#global-progress').hide();
+			}, 5000);
+		}
+	});
+});

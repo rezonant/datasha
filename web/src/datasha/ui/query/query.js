@@ -281,7 +281,12 @@ function QueryResultsController($scope, $timeout, $mdDialog, api, uiGridConstant
 
 						$scope.query = query;
 						$scope.available = {
-							delete: false
+							delete: false,
+							edit: false,
+							assocations: false,
+							stash: false,
+							moreLike: false,
+							bookmark: false
 						};
 
 						// Analyze the query to determine available operations
@@ -290,6 +295,7 @@ function QueryResultsController($scope, $timeout, $mdDialog, api, uiGridConstant
 
 							// Take that, PMA [we support deletes on multi-table rows]
 							$scope.available.delete = analysis.from && analysis.from.length > 0;
+							$scope.available.edit = analysis.from && analysis.from.length > 0;
 
 						});
 
