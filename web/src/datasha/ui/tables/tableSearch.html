@@ -12,6 +12,7 @@
 							  style="padding-left:32px;">
 					<div ng-repeat="v in [0]" ng-show="!previewMode">
 						<md-checkbox ng-model="column.checked" 
+									 aria-label="Include in search"
 									 style="margin-right: 4px; position:absolute;top:10px;left:-32px;"></md-checkbox>
 					</div>
 					<md-list-item-text>
@@ -23,7 +24,8 @@
 							{{column.value}}
 						</span>
 
-						<md-select ng-model="column.operator" style="margin: 0 0 0 1em; display: inline-flex;" ng-show="!previewMode">
+						<md-select aria-label="Operator" ng-model="column.operator" 
+								   style="margin: 0 0 0 1em; display: inline-flex;" ng-show="!previewMode">
 							<md-option ng-value="'='">=</md-option>
 							<md-option ng-value="'!='">!=</md-option>
 							<md-option ng-value="'&gt;'">&gt;</md-option>

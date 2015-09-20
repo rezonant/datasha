@@ -31,7 +31,7 @@ ngm.directive('appSpinner', function() {
 ngm.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUtil, $mdDialog, api, passwordDialog) {
 	
 	$scope.$root.brand = {
-		name: 'dataforest.io',
+		name: 'datasha',
 		commercial: false
 	};
 
@@ -62,10 +62,15 @@ ngm.controller('ShellController', function ($scope, $timeout, $mdSidenav, $mdUti
 		// Build handler to open/close a SideNav
 
 		function buildToggler(navID) {
-		  var debounceFn =  $mdUtil.debounce(function(){
-				$mdSidenav(navID).toggle();
-			  },200);
-		  return debounceFn;
+			var debounceFn =  $mdUtil.debounce(function(){
+				
+					if (!$scope.loadNav)
+						$scope.loadNav = {};
+					$scope.loadNav[navID] = true;
+
+					$mdSidenav(navID).toggle();
+				},200);
+			return debounceFn;
 		};
 
 		$scope.toggleLeft = buildToggler('left');

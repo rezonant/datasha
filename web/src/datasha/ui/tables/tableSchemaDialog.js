@@ -26,6 +26,7 @@ function TableSchemaDialogService($mdDialog, TABLE_SCHEMA_DIALOG_TEMPLATE) {
 				targetEvent: $event,
 				templateUrl: TABLE_SCHEMA_DIALOG_TEMPLATE,
 				locals: {
+					connection: connection,
 					table: table,
 					schema: schema,
 					database: database
@@ -39,10 +40,37 @@ function TableSchemaDialogService($mdDialog, TABLE_SCHEMA_DIALOG_TEMPLATE) {
 /**
  * Controller for the Table Schema dialog
  */
-function TableSchemaDialogController($scope, $mdDialog, table, schema, database) {
+function TableSchemaDialogController($scope, $mdDialog, tableSchemaDialog, connection, table, schema, database) {
 	$scope.db = database;
 	$scope.table = table;
 	$scope.schema = schema;
+	
+	$scope.drop = function(column) {
+		var dialog = $mdDialog.confirm()
+			.title('Drop column '+table.name+'.'+column.name+' (database '+database.name+')?')
+			.content('Are you sure you wish to drop this column?')
+			.ok('Remove')
+			.cancel('Cancel')
+		
+		$mdDialog.show(dialog)
+			.then(function() {
+				alert('would drop '+column.name);
+				tableSchemaDialog.show(connection, database, table, schema);
+			})
+			.catch(function(e) {
+				tableSchemaDialog.show(connection, database, table, schema);
+			})
+		;
+	};
+	
+	$scope.showEdit = function(column) {
+		alert('edit '+column.name);
+	};
+	
+	$scope.showAddIndex = function(column) {
+		alert('index '+column.name);
+	};
+	
 	$scope.cancel = function() {
 		$mdDialog.hide();
 	};

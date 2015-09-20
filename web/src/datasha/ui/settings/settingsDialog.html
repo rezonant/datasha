@@ -1,0 +1,52 @@
+
+<md-list class="settings">
+	<md-subheader>
+		<md-icon md-font-library="material-icons" style="float:right;">panorama</md-icon>
+		Appearance
+	</md-subheader>
+	<md-divider></md-divider>
+
+	<md-list-item ng-click="noop = 1">
+		<p>Highlight Color</p>
+	</md-list-item>
+	<md-list-item ng-click="noop = 1">
+		<p>Background Color</p>
+	</md-list-item>
+	<md-list-item ng-click="noop = 1">
+		<p>Foreground Color</p>
+	</md-list-item>
+
+	<md-subheader>
+		<md-icon md-font-library="material-icons" style="float:right;">blur_linear</md-icon>
+		Performance
+	</md-subheader>
+	<md-divider></md-divider>
+
+	<md-list-item ng-click="noop = 1">
+		<p>Use simple data grids</p>
+		<md-switch class="md-secondary" ng-model="settings.simpleGrids"></md-switch>
+	</md-list-item>
+
+	<md-subheader>
+		<md-icon md-font-library="material-icons" style="float:right;">lock</md-icon>
+		Security
+	</md-subheader>
+	<md-divider></md-divider>
+
+	<md-list-item ng-click="noop = 1">
+		<p>Encrypt local data</p>
+		<md-switch class="md-secondary" ng-model="settings.encryptLocal"></md-switch>
+	</md-list-item>
+	<md-list-item ng-click="noop = 1">
+		Store passwords locally
+		<md-switch 
+			class="md-secondary" 
+			aria-label="Enabled"
+			ng-model="settings.storePasswordsLocal"></md-switch>
+	</md-list-item>
+	<md-list-item ng-click="noop = 1">
+		Erase all data
+	</md-list-item>
+
+
+</md-list>

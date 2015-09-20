@@ -68,230 +68,231 @@
 
 		<section ng-class="{'loaded': loaded, 'loading': !loaded}" layout="row" flex id="main">
 			<md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
-				<div ng-controller="LeftSidebarController">
-					<md-toolbar class="md-theme-indigo"> 
-						<div class="md-toolbar-tools">
-							<h1 ng-click="goHome()">
-								<div class="sidebar-logo" ng-include="'img/logo.svg'">
-								</div>
-							</h1>
-							<span flex></span>
-
-							<md-button class="md-icon-button" aria-label="Hide" ng-click="close()">
-								<md-icon md-font-library="material-icons">close</md-icon>
-							</md-button> 
-						</div>
-					</md-toolbar>
-					<md-content layout-padding class="full-height">
-
-						<md-tabs md-swipe-content="true" md-selected="selectedTab" md-stretch-tabs="true" md-no-bar="true"
-								 class="hidden-tabs">
-							<md-tab label="Servers">
-								<div class="tab-header">
-									<md-button ng-click="goHome()">
-										<md-icon md-font-library="material-icons" ng-click="selectedTab = 0">storage</md-icon>
-										Connections
-									</md-button>
-								</div>
-
-
-									<div class="flex-actions">
-										<md-button class="md-icon-button" ng-click="goToConnectionPage(activeConnection)">
-											<md-icon md-font-library="material-icons">info</md-icon> 
-										</md-button>
-										<md-button class="md-icon-button">
-											<md-icon md-font-library="material-icons">delete</md-icon>
-										</md-button>
-										<md-button class="md-icon-button">
-											<md-icon md-font-library="material-icons">trending_up</md-icon>
-										</md-button>
-										<md-button class="md-icon-button" ng-click="showConnectDialog($event);">
-											<md-icon md-font-library="material-icons">add</md-icon>
-										</md-button>
+				<div dt-lazy-load="loadNav.left">
+					<div ng-controller="LeftSidebarController">
+						<md-toolbar class="md-theme-indigo"> 
+							<div class="md-toolbar-tools">
+								<h1 ng-click="goHome()">
+									<div class="sidebar-logo" ng-include="'img/logo.svg'">
 									</div>
+								</h1>
+								<span flex></span>
 
-								<md-input-container>
-									<label>Search Connections</label>
-									<input type="text" ng-model="searchConnections" />
-								</md-input-container>
+								<md-button class="md-icon-button" aria-label="Hide" ng-click="close()">
+									<md-icon md-font-library="material-icons">close</md-icon>
+								</md-button> 
+							</div>
+						</md-toolbar>
+						<md-content layout-padding class="full-height">
 
-								<em ng-show="$root.activeConnections.length == 0">
-									There are no active server connections. To add a connection, click the Add
-									button above.
-								</em>
-
-								<em ng-show="$root.activeConnections.length > 0 && ($root.activeConnections | filter: searchConnections).length == 0">
-									No connections match your search string. 
-									{{$root.activeConnections.length}} connections are hidden.
-								</em>
-
-								<div style="position:absolute;top: 10.5em;left:0;right:0;bottom:0;overflow-y:auto;">
-
-									<md-list>
-										<md-list-item class="md-3-line" 
-													  ng-repeat="cnx in $root.activeConnections | filter: searchConnections" 
-													  ng-click="selectConnection(cnx, $event)">
-											<div class="md-list-item-text">
-												{{cnx.label}}
-												<span ng-show="!cnx.isAlive" 
-													  class="md-list-item-tag">Inactive</span>
-											</div>
-											<md-button class="md-secondary md-icon-button" ng-click="deleteConnection(cnx)" >
-												<md-icon 
-														 aria-label="Options" 
-														 md-font-library="material-icons">delete</md-icon>
-											</md-button>
-											<md-divider ng-if="!$last"></md-divider>
-										</md-list-item>
-									</md-list>
-								</div>
-
-							</md-tab>
-							<md-tab label="DBs">
-								<div ng-show="!activeConnection">
-									
-									<app-spinner></app-spinner>
-								</div>
-								<div ng-show="activeConnection">
-
+							<md-tabs md-swipe-content="true" md-selected="selectedTab" md-stretch-tabs="true" md-no-bar="true"
+									 class="hidden-tabs">
+								<md-tab label="Servers">
 									<div class="tab-header">
-										<md-button ng-click="selectedTab = 0">
-											<md-icon md-font-library="material-icons">storage</md-icon>
-										</md-button>
-										
-										&raquo; 
-
-										<md-button ng-click="goToConnectionPage(activeConnection)">
-											<md-icon md-font-library="material-icons">now_widgets</md-icon>
-											{{activeConnection.label}}
+										<md-button ng-click="goHome()">
+											<md-icon md-font-library="material-icons" ng-click="selectedTab = 0">storage</md-icon>
+											Connections
 										</md-button>
 									</div>
 
-									<div class="flex-actions">
-										<md-button class="md-icon-button" ng-click="goToConnectionPage(activeConnection)">
-											<md-icon md-font-library="material-icons">info</md-icon> 
-										</md-button>
-										<md-button class="md-icon-button">
-											<md-icon md-font-library="material-icons">delete</md-icon>
-										</md-button>
-										<md-button class="md-icon-button">
-											<md-icon md-font-library="material-icons">trending_up</md-icon>
-										</md-button>
-										<md-button class="md-icon-button">
-											<md-icon md-font-library="material-icons">add</md-icon>
-										</md-button>
-									</div>
-									
+
+										<div class="flex-actions">
+											<md-button class="md-icon-button" ng-click="goToConnectionPage(activeConnection)">
+												<md-icon md-font-library="material-icons">info</md-icon> 
+											</md-button>
+											<md-button class="md-icon-button">
+												<md-icon md-font-library="material-icons">delete</md-icon>
+											</md-button>
+											<md-button class="md-icon-button">
+												<md-icon md-font-library="material-icons">trending_up</md-icon>
+											</md-button>
+											<md-button class="md-icon-button" ng-click="showConnectDialog($event);">
+												<md-icon md-font-library="material-icons">add</md-icon>
+											</md-button>
+										</div>
+
 									<md-input-container>
-										<label>Search Databases</label>
-										<input type="text" ng-model="searchDatabases" />
+										<label>Search Connections</label>
+										<input type="text" ng-model="searchConnections" />
 									</md-input-container>
 
-
-									<em ng-show="activeConnection.databaseNames.length == 0">
-										There are no available databases on the active connection 
-										({{activeConnection.label}}). To add a database, click the Add
+									<em ng-show="$root.activeConnections.length == 0">
+										There are no active server connections. To add a connection, click the Add
 										button above.
 									</em>
 
-									<em ng-show="activeConnection.databaseNames.length > 0 && (activeConnection.databaseNames | filter: searchDatabases).length == 0">
-										No databases match your search string. 
-										{{activeConnection.databases.length}} databases are hidden.
-									</em>	
+									<em ng-show="$root.activeConnections.length > 0 && ($root.activeConnections | filter: searchConnections).length == 0">
+										No connections match your search string. 
+										{{$root.activeConnections.length}} connections are hidden.
+									</em>
 
-									<div style="position:absolute;top: 11.5em;left:0;right:0;bottom:0;overflow-y:auto;">
-
-										<md-list>
-											<md-list-item  
-												class="md-3-line"
-												ng-repeat="db in activeConnection.databases | filter: searchDatabases track by db.name "
-												ng-click="selectDb(db.name)">
-												<div class="md-list-item-text"> 
-													{{db.name}} 
-													<span class="md-list-item-tag">
-														{{db.tableCount}} [{{db.size | fileSize}}]
-													</span>
-												</div> 
-												<md-divider ng-if="!$last"></md-divider>
-											</md-list-item>
-										</md-list>
-									</div>
-								</div>
-							</md-tab>
-							<md-tab label="Tables">
-								<div ng-show="!activeDb">
-									
-									<app-spinner></app-spinner>
-								</div>
-								<div ng-show="activeDb">
-									<div class="tab-header">
-
-										<md-button ng-click="selectedTab = 0">
-											<md-icon md-font-library="material-icons">storage</md-icon>
-										</md-button>
-										
-										&raquo; 
-										
-										<md-button ng-click="selectedTab = 1">
-											<md-icon md-font-library="material-icons" >now_widgets</md-icon>
-											{{activeConnection.host}}
-										</md-button>
-										
-										&raquo; 
-										
-										<md-button ng-click="goToDatabasePage(activeConnection, activeDb)">
-											<md-icon md-font-library="material-icons">share</md-icon>
-											{{activeDb.name}}
-										</md-button>
-									</div>
-
-									<div class="flex-actions">
-										<md-button class="md-icon-button" ng-click="goToDatabasePage(activeConnection, activeDb)">
-											<md-icon md-font-library="material-icons">info</md-icon>
-										</md-button>
-										<md-button class="md-icon-button" ng-click="drop(activeConnection, activeDb)">
-											<md-icon md-font-library="material-icons">delete</md-icon>
-										</md-button>
-										<md-button class="md-icon-button" ng-click="goToQuery(activeConnection, activeDb)">
-											<md-icon md-font-library="material-icons">directions</md-icon>
-										</md-button>
-										<md-button class="md-icon-button" ng-click="showAddTable(activeConnection, activeDb)">
-											<md-icon md-font-library="material-icons">add</md-icon>
-										</md-button>
-									</div>
-									
-									<md-input-container>
-										<label>Search Tables</label>
-										<input type="text" ng-model="searchTables" />
-									</md-input-container>
-
-									<div style="position:absolute;top: 11.5em;left:0;right:0;bottom:0;overflow-y:auto;">
+									<div style="position:absolute;top: 10.5em;left:0;right:0;bottom:0;overflow-y:auto;">
 
 										<md-list>
-											<md-list-item 
-												class="md-3-line" 
-												ng-repeat="table in activeDb.tables | filter: searchTables"
-												ng-click="goToTable(table)">
+											<md-list-item class="md-3-line" 
+														  ng-repeat="cnx in $root.activeConnections | filter: searchConnections" 
+														  ng-click="selectConnection(cnx, $event)">
 												<div class="md-list-item-text">
-													{{table.name}}
-													<span class="md-list-item-tag">
-														{{table.rows | rowCount}} [{{table.size | fileSize}}]
-													</span>
+													{{cnx.label}}
+													<span ng-show="!cnx.isAlive" 
+														  class="md-list-item-tag">Inactive</span>
 												</div>
+												<md-button class="md-secondary md-icon-button" ng-click="deleteConnection(cnx)" >
+													<md-icon 
+															 aria-label="Options" 
+															 md-font-library="material-icons">delete</md-icon>
+												</md-button>
 												<md-divider ng-if="!$last"></md-divider>
 											</md-list-item>
 										</md-list>
 									</div>
-								</div>
-							</md-tab>
-						</md-tabs>
 
-						<br/>
+								</md-tab>
+								<md-tab label="DBs">
+									<div ng-show="!activeConnection">
+
+										<app-spinner></app-spinner>
+									</div>
+									<div ng-show="activeConnection">
+
+										<div class="tab-header">
+											<md-button ng-click="selectedTab = 0">
+												<md-icon md-font-library="material-icons">storage</md-icon>
+											</md-button>
+
+											&raquo; 
+
+											<md-button ng-click="goToConnectionPage(activeConnection)">
+												<md-icon md-font-library="material-icons">now_widgets</md-icon>
+												{{activeConnection.label}}
+											</md-button>
+										</div>
+
+										<div class="flex-actions">
+											<md-button class="md-icon-button" ng-click="goToConnectionPage(activeConnection)">
+												<md-icon md-font-library="material-icons">info</md-icon> 
+											</md-button>
+											<md-button class="md-icon-button">
+												<md-icon md-font-library="material-icons">delete</md-icon>
+											</md-button>
+											<md-button class="md-icon-button">
+												<md-icon md-font-library="material-icons">trending_up</md-icon>
+											</md-button>
+											<md-button class="md-icon-button">
+												<md-icon md-font-library="material-icons">add</md-icon>
+											</md-button>
+										</div>
+
+										<md-input-container>
+											<label>Search Databases</label>
+											<input type="text" ng-model="searchDatabases" />
+										</md-input-container>
 
 
-					</md-content>
+										<em ng-show="activeConnection.databaseNames.length == 0">
+											There are no available databases on the active connection 
+											({{activeConnection.label}}). To add a database, click the Add
+											button above.
+										</em>
+
+										<em ng-show="activeConnection.databaseNames.length > 0 && (activeConnection.databaseNames | filter: searchDatabases).length == 0">
+											No databases match your search string. 
+											{{activeConnection.databases.length}} databases are hidden.
+										</em>	
+
+										<div style="position:absolute;top: 11.5em;left:0;right:0;bottom:0;overflow-y:auto;">
+
+											<md-list>
+												<md-list-item  
+													class="md-3-line"
+													ng-repeat="db in activeConnection.databases | filter: searchDatabases track by db.name "
+													ng-click="selectDb(db.name)">
+													<div class="md-list-item-text"> 
+														{{db.name}} 
+														<span class="md-list-item-tag">
+															{{db.tableCount}} [{{db.size | fileSize}}]
+														</span>
+													</div> 
+													<md-divider ng-if="!$last"></md-divider>
+												</md-list-item>
+											</md-list>
+										</div>
+									</div>
+								</md-tab>
+								<md-tab label="Tables">
+									<div ng-show="!activeDb">
+
+										<app-spinner></app-spinner>
+									</div>
+									<div ng-show="activeDb">
+										<div class="tab-header">
+
+											<md-button ng-click="selectedTab = 0">
+												<md-icon md-font-library="material-icons">storage</md-icon>
+											</md-button>
+
+											&raquo; 
+
+											<md-button ng-click="selectedTab = 1">
+												<md-icon md-font-library="material-icons" >now_widgets</md-icon>
+												{{activeConnection.host}}
+											</md-button>
+
+											&raquo; 
+
+											<md-button ng-click="goToDatabasePage(activeConnection, activeDb)">
+												<md-icon md-font-library="material-icons">share</md-icon>
+												{{activeDb.name}}
+											</md-button>
+										</div>
+
+										<div class="flex-actions">
+											<md-button class="md-icon-button" ng-click="goToDatabasePage(activeConnection, activeDb)">
+												<md-icon md-font-library="material-icons">info</md-icon>
+											</md-button>
+											<md-button class="md-icon-button" ng-click="drop(activeConnection, activeDb)">
+												<md-icon md-font-library="material-icons">delete</md-icon>
+											</md-button>
+											<md-button class="md-icon-button" ng-click="goToQuery(activeConnection, activeDb)">
+												<md-icon md-font-library="material-icons">directions</md-icon>
+											</md-button>
+											<md-button class="md-icon-button" ng-click="showAddTable(activeConnection, activeDb)">
+												<md-icon md-font-library="material-icons">add</md-icon>
+											</md-button>
+										</div>
+
+										<md-input-container>
+											<label>Search Tables</label>
+											<input type="text" ng-model="searchTables" />
+										</md-input-container>
+
+										<div style="position:absolute;top: 11.5em;left:0;right:0;bottom:0;overflow-y:auto;">
+
+											<md-list>
+												<md-list-item 
+													class="md-3-line" 
+													ng-repeat="table in activeDb.tables | filter: searchTables"
+													ng-click="goToTable(table)">
+													<div class="md-list-item-text">
+														{{table.name}}
+														<span class="md-list-item-tag">
+															{{table.rows | rowCount}} [{{table.size | fileSize}}]
+														</span>
+													</div>
+													<md-divider ng-if="!$last"></md-divider>
+												</md-list-item>
+											</md-list>
+										</div>
+									</div>
+								</md-tab>
+							</md-tabs>
+
+							<br/>
+
+
+						</md-content>
+					</div>
 				</div>
-
 			</md-sidenav>
 			<md-content flex layout-padding class="main">
 				<div layout="column" layout-fill layout-align="top center">
@@ -300,107 +301,72 @@
 				</div>
 			</md-content>
 			<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-				<div ng-controller="RightSidebarController">
-					<md-toolbar class="md-theme-light">
-						<h1 class="md-toolbar-tools">Settings</h1>
-					</md-toolbar>
-					<md-content layout-padding class="full-height">
+				<div dt-lazy-load="loadNav.right">
+					<div ng-controller="RightSidebarController">
+						<md-toolbar class="md-theme-light">
+							<h1 class="md-toolbar-tools">
+								<div class="sidebar-logo" ng-include="'img/logo.svg'">
+								</div>
+							</h1>
+						</md-toolbar>
 						
-						<div class="scroll-box">
-							<md-list class="settings">
-								<md-subheader>
-									<md-icon md-font-library="material-icons" style="float:right;">panorama</md-icon>
-									Appearance
-								</md-subheader>
-								<md-divider></md-divider>
-
-								<md-list-item ng-click="noop = 1">
-									<p>Highlight Color</p>
-								</md-list-item>
-								<md-list-item ng-click="noop = 1">
-									<p>Background Color</p>
-								</md-list-item>
-								<md-list-item ng-click="noop = 1">
-									<p>Foreground Color</p>
-								</md-list-item>
-
-								<md-subheader>
-									<md-icon md-font-library="material-icons" style="float:right;">blur_linear</md-icon>
-									Performance
-								</md-subheader>
-								<md-divider></md-divider>
-
-								<md-list-item ng-click="noop = 1">
-									<p>Use simple data grids</p>
-									<md-switch class="md-secondary" ng-model="settings.simpleGrids"></md-switch>
-								</md-list-item>
-
-								<md-subheader>
-									<md-icon md-font-library="material-icons" style="float:right;">lock</md-icon>
-									Security
-								</md-subheader>
-								<md-divider></md-divider>
-
-								<md-list-item ng-click="noop = 1">
-									<p>Encrypt local data</p>
-									<md-switch class="md-secondary" ng-model="settings.encryptLocal"></md-switch>
-								</md-list-item>
-								<md-list-item ng-click="noop = 1">
-									Store passwords locally
-									<md-switch class="md-secondary" ng-model="settings.storePasswordsLocal"></md-switch>
-								</md-list-item>
-								<md-list-item ng-click="noop = 1">
-									Erase all data
-								</md-list-item>
-
-								<div ng-show="brand.commercial">
-									<md-subheader>
-										<md-icon md-font-library="material-icons" style="float:right;">help</md-icon>
-										Help
-									</md-subheader>
-									<md-divider></md-divider>
-
-									<md-list-item ng-click="noop = 1">
-										Using {{brand.name}}
+						<md-content layout-padding class="full-height">
+							<div class="scroll-box">
+								<md-list>
+									<md-list-item ng-click="showSettings()">
+										<md-list-item-text>
+											Settings
+										</md-list-item-text>
 									</md-list-item>
+									
+									<div ng-show="brand.commercial">
+										<md-subheader>
+											<md-icon md-font-library="material-icons" style="float:right;">help</md-icon>
+											Help
+										</md-subheader>
+										<md-divider></md-divider>
 
-									<md-list-item ng-click="noop = 1">
-										Troubleshooting
-									</md-list-item>
+										<md-list-item ng-click="noop = 1">
+											Using {{brand.name}}
+										</md-list-item>
 
-									<md-list-item ng-click="noop = 1">
-										Report an issue
-									</md-list-item>
+										<md-list-item ng-click="noop = 1">
+											Troubleshooting
+										</md-list-item>
 
-								</div>
-								<div ng-show="!brand.commercial">
-									<md-subheader>
-										<md-icon md-font-library="material-icons" style="float:right;">help</md-icon>
-										Help
-									</md-subheader>
-									<md-divider></md-divider>
+										<md-list-item ng-click="noop = 1">
+											Report an issue
+										</md-list-item>
 
-									<md-list-item ng-click="noop = 1">
-										Documentation
-									</md-list-item>
-									<md-list-item ng-click="noop = 1">
-										Github
-									</md-list-item>
+									</div>
+									<div ng-show="!brand.commercial">
+										<md-subheader>
+											<md-icon md-font-library="material-icons" style="float:right;">help</md-icon>
+											Help
+										</md-subheader>
+										<md-divider></md-divider>
 
-									<md-subheader>
-										<md-icon md-font-library="material-icons" style="float:right;">favorite</md-icon>
-										Support {{brand.name}}
-									</md-subheader>
-									<md-divider></md-divider>
+										<md-list-item ng-click="noop = 1">
+											Documentation
+										</md-list-item>
+										<md-list-item ng-click="noop = 1">
+											Github
+										</md-list-item>
 
-									<md-list-item ng-click="noop = 1">
-										Donate
-									</md-list-item>
-								</div>
+										<md-subheader>
+											<md-icon md-font-library="material-icons" style="float:right;">favorite</md-icon>
+											Support {{brand.name}}
+										</md-subheader>
+										<md-divider></md-divider>
 
-							</md-list>
-						</div>
-					</md-content>
+										<md-list-item ng-click="noop = 1">
+											Donate
+										</md-list-item>
+									</div>
+								</md-list>
+							</div>
+						</md-content>
+					</div>
 				</div>
 			</md-sidenav>
 		</section>

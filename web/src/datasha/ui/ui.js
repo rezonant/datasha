@@ -7,7 +7,8 @@ var module = angular.module(module.exports = 'datasha.ui', [
 	require('./query'),
 	require('./tables'),
 	require('./shell'),
-	require('./filters')
+	require('./filters'),
+	require('./lazyLoad')
 ]);
 
 module.run(function($timeout, $rootScope) {

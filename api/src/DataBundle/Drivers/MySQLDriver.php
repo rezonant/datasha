@@ -69,7 +69,7 @@ class MySQLDriver extends DatabaseDriver {
 					// is only one table. Otherwise determining table
 					// would require schema information
 
-					if (count($tree['FROM']) == 1) {
+					if (isset($tree['FROM']) && count($tree['FROM']) == 1) {
 						$table = $tree['FROM'][0];
 						$realColumn = str_replace('`', '', $table['table'].'.'.$realColumn);
 					}

@@ -24,7 +24,9 @@
 							ng-repeat="column in row.columns" 
 							ng-show="!previewMode || column.checked"
 							ng-class="{'preview': previewMode}">
-					<md-checkbox ng-show="!previewMode" ng-model="column.checked"></md-checkbox>
+					<md-checkbox ng-show="!previewMode" 
+								 aria-label="Include in new row"
+								 ng-model="column.checked"></md-checkbox>
 					<div>
 						<span ng-show="!previewMode">{{column.name}}</span>
 						<strong ng-show="previewMode">`{{column.name}}`</strong>
